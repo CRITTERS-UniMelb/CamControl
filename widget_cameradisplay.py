@@ -74,11 +74,12 @@ class CameraDisplayWidget(QGroupBox):
     #         self.cameraDisplayDims.emit([self.minimizedWidth, self.minimizedHeight])
     
     def updateCameraDisplayImage(self, image):
-        if (self.fullScreen == 0):
-            imageScaled = image.scaled(self.imageMinimizedWidth, self.imageMinimizedHeight, Qt.KeepAspectRatio)
-        elif (self.fullScreen == 1):
-            imageScaled = image.scaled(self.cameraWidget_CameraImage.width(), self.cameraWidget_CameraImage.height(), Qt.KeepAspectRatio)
-        img = imageScaled.mirrored(False,True)
+        imageScaled = image
+        #if (self.fullScreen == 0):
+        #    imageScaled = image.scaled(self.imageMinimizedWidth, self.imageMinimizedHeight, Qt.KeepAspectRatio)
+        #elif (self.fullScreen == 1):
+        #    imageScaled = image.scaled(self.cameraWidget_CameraImage.width(), self.cameraWidget_CameraImage.height(), Qt.KeepAspectRatio)
+        img = imageScaled.mirrored(False,False)
         self.cameraWidget_CameraImage.setPixmap(QPixmap.fromImage(img))
 
     def calculateMinimizedGeometry(self):
