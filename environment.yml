@@ -1,5 +1,13 @@
 # environment.yml
 name: Elly
+channels:
+  - conda-forge
+  - defaults
 dependencies:
-  - python
+  - python=3.13.13
   - numpy
+  - pandas
+  - opencv
+  - pyinstaller
+  - pyqt
+  - pyserial
