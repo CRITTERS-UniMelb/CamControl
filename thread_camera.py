@@ -2,7 +2,7 @@
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-import pythoncom
+#import pythoncom
 import time
 import uvcham
 
@@ -61,7 +61,7 @@ class CameraThread(QThread):
 
 
     def run(self):
-        pythoncom.CoInitialize()
+        #pythoncom.CoInitialize()
         a = uvcham.Uvcham.enum()
         if len(a) > 0:
             print("ELLY:    Opening the camera {} (id = {})".format(a[0].displayname, a[0].id))

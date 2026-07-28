@@ -156,7 +156,7 @@ class Uvcham:
         _fields_ = [('displayname', ctypes.c_wchar * 128), # display name
                     ('id', ctypes.c_wchar * 128)]          # unique and opaque id of a connected camera, for Uvcham_open
 
-    __CALLBACK = ctypes.WINFUNCTYPE(None, ctypes.c_uint, ctypes.py_object)
+  #  __CALLBACK = ctypes.WINFUNCTYPE(None, ctypes.c_uint, ctypes.py_object)
     __lib = None
 
     @staticmethod
