@@ -14,7 +14,7 @@ class MyMainWindow(QMainWindow):
         super().__init__()       
         self.setGeometry(100, 100, 1500, 1500)
         self.setWindowIcon(QIcon(os.path.join(os.path.dirname(__file__), 'images/icons/logo_500x500.png')))
-        self.setWindowTitle('Elly')
+        self.setWindowTitle('Elly2')
         self.initMenu()
         self.initCentralWidget()
 
