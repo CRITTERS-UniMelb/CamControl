@@ -85,11 +85,6 @@ class StatusWidget(QGroupBox):
         # Horizontal separator in right column
         self.statusWidgetLayout_RightColumn.addWidget(stylesheets.HLine())
 
-        # Arduino-Light Connection Status Layout
-        self.statusWidget_ArduinoLightConnectionStatusLayout = QHBoxLayout()
-        self.statusWidgetLayout_RightColumn.addLayout(self.statusWidget_ArduinoLightConnectionStatusLayout)
-
-
     def makeFonts(self):
         futuraheavyfont = QFontDatabase.addApplicationFont(os.path.join(os.path.dirname(__file__), 'font/Futura/Futura Heavy font.ttf'))
         self.futuraheavyfont_str = QFontDatabase.applicationFontFamilies(futuraheavyfont)[0]
@@ -157,16 +152,6 @@ class StatusWidget(QGroupBox):
         self.statusWidget_cameraActionStatus.setStyleSheet("color: red;")
         self.statusWidget_cameraActionStatus.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.statusWidget_cameraActionStatusLayout.addWidget(self.statusWidget_cameraActionStatus, alignment=Qt.AlignCenter)
-
-        # Arduino-Light Connection Status
-        self.statusWidget_ArduinoLightConnectionStatusLabel = QLabel("Ring Light connection status:")
-        self.statusWidget_ArduinoLightConnectionStatusLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        self.statusWidget_ArduinoLightConnectionStatusLayout.addWidget(self.statusWidget_ArduinoLightConnectionStatusLabel, alignment=Qt.AlignCenter)
-
-        self.statusWidget_ArduinoLightConnectionStatus = QLabel("Disconnected")
-        self.statusWidget_ArduinoLightConnectionStatus.setStyleSheet("color: red;")
-        self.statusWidget_ArduinoLightConnectionStatus.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
-        self.statusWidget_ArduinoLightConnectionStatusLayout.addWidget(self.statusWidget_ArduinoLightConnectionStatus, alignment=Qt.AlignCenter)
 
 
     def updateGantryConnectionStatus(self, status):
@@ -273,15 +258,3 @@ class StatusWidget(QGroupBox):
         elif (action == "Screenshot Saved"):
             self.statusWidget_cameraActionStatus.setText("Screenshot Saved")
             self.statusWidget_cameraActionStatus.setStyleSheet("color: green;")
-
-
-    def updateArduinoRingLightStatus(self, status):
-        if (status == 0):
-            self.statusWidget_ArduinoLightConnectionStatus.setText("Disconnected")
-            self.statusWidget_ArduinoLightConnectionStatus.setStyleSheet("color: red;")
-        elif (status == 1):
-            self.statusWidget_ArduinoLightConnectionStatus.setText("Connected")
-            self.statusWidget_ArduinoLightConnectionStatus.setStyleSheet("color: green;")
-        elif (status == 2):
-            self.statusWidget_ArduinoLightConnectionStatus.setText("Connection Failed")
-            self.statusWidget_ArduinoLightConnectionStatus.setStyleSheet("color: red;")

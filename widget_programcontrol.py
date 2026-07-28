@@ -14,7 +14,6 @@ import stylesheets
 class ProgramControlWidget(QGroupBox):
 
     programGantrySignal = pyqtSignal(object)
-    programArduinoSignal = pyqtSignal(object)
     programCameraSignal = pyqtSignal(object)
 
     def __init__(self):
@@ -128,12 +127,6 @@ class ProgramControlWidget(QGroupBox):
         self.programWidget_UseCamera.setChecked(True)
         self.programWidget_UseCamera.stateChanged.connect(self.updateUseCamera)
         self.programWidget_DeviceSelectorLayout.addWidget(self.programWidget_UseCamera, alignment=Qt.AlignCenter)
-
-        self.programWidget_UseRingLight = QCheckBox("Use Ring Light")
-        self.programWidget_UseRingLight.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
-        self.programWidget_UseRingLight.setChecked(True)
-        self.programWidget_UseRingLight.stateChanged.connect(self.updateUseArduinoRingLight)
-        self.programWidget_DeviceSelectorLayout.addWidget(self.programWidget_UseRingLight, alignment=Qt.AlignCenter)
 
         # Device Parameters
         ## Horizontal separator
@@ -269,9 +262,7 @@ class ProgramControlWidget(QGroupBox):
             self.programWidget_VideoDuration.setEnabled(False)
             self.programWidget_VideoDirectoryLabel.setEnabled(False)
             self.programWidget_VideoDirectoryButton.setEnabled(False)
-    
-    def updateUseArduinoRingLight(self):
-        pass
+
 
     def recordVideo(self):
         if (self.programWidget_RecordVideo.isChecked() is False):
@@ -338,14 +329,12 @@ class ProgramControlWidget(QGroupBox):
         self.programThread = ProgramThread(
             self.programWidget_UseGantry.isChecked(),
             self.programWidget_UseCamera.isChecked(),
-            self.programWidget_UseRingLight.isChecked(),
             self.timesDF,
             self.moveCommands,
             self.programWidget_RecordVideo.isChecked(),
             self.programWidget_VideoDuration.value(),
             self.cameraOutputVideoDirectory)
         self.programThread.programGantrySignal.connect(self.sendProgramGantrySignal)
-        self.programThread.programArduinoSignal.connect(self.sendProgramArduinoSignal)
         self.programThread.programCameraSignal.connect(self.sendProgramCameraSignal)
         self.programThread.start()
 
@@ -381,8 +370,5 @@ class ProgramControlWidget(QGroupBox):
     def sendProgramGantrySignal(self, signal):
         self.programGantrySignal.emit(signal)
 
-    def sendProgramArduinoSignal(self, signal):
-        self.programArduinoSignal.emit(signal)
-    
     def sendProgramCameraSignal(self, signal):
         self.programCameraSignal.emit(signal)

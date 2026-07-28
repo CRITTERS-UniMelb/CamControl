@@ -7,7 +7,6 @@ from PyQt5.QtCore import *
 from widget_gantrycontrol import GantryControlWidget
 from widget_status import StatusWidget
 from widget_cameracontrol import CameraControlWidget
-from widget_arduinolightcontrol import ArduinoLightControlWidget
 from widget_cameradisplay import CameraDisplayWidget
 from widget_programcontrol import ProgramControlWidget
 
@@ -36,11 +35,8 @@ class CentralWidget(QWidget):
         self.widgetCameraDisplay = CameraDisplayWidget()
         self.mainWidgetLayout.addWidget(self.widgetCameraDisplay, 2, 4, 7, 6)
 
-        self.widgetArduinoLightControls = ArduinoLightControlWidget()
-        self.mainWidgetLayout.addWidget(self.widgetArduinoLightControls, 9, 0, 2, 3)
-
         self.widgetProgramControls = ProgramControlWidget()
-        self.mainWidgetLayout.addWidget(self.widgetProgramControls, 9, 3, 2, 7)
+        self.mainWidgetLayout.addWidget(self.widgetProgramControls, 9, 0, 2, -1)
 
 
     def makeSignalConnections(self):
@@ -57,10 +53,8 @@ class CentralWidget(QWidget):
         # self.widgetCameraDisplay.cameraDisplayDims.connect(self.updateCameraDisplayDims)
         self.widgetCameraDisplay.fullScreenSignal.connect(self.updateFullScreen)
 
-        self.widgetArduinoLightControls.arduinoRingLightConnectionSignal.connect(self.widgetStatus.updateArduinoRingLightStatus)
 
         self.widgetProgramControls.programGantrySignal.connect(self.sendProgramGantrySignal)
-        self.widgetProgramControls.programArduinoSignal.connect(self.sendProgramArduinoSignal)
         self.widgetProgramControls.programCameraSignal.connect(self.sendProgramCameraSignal)
 
 
@@ -97,15 +91,6 @@ class CentralWidget(QWidget):
         elif signal[0] == "Move":
             self.widgetGantryControls.programMoveGantry([signal[1], signal[2]], signal[3])
     
-    def sendProgramArduinoSignal(self, signal):
-        if (signal[0] == "Connect Arduino"):
-            self.widgetArduinoLightControls.programConnectArduino()
-        elif (signal[0] == "Turn Light On"):
-            self.widgetArduinoLightControls.programSwitchLightOn()
-        elif (signal[0] == "Turn Light Off"):
-            self.widgetArduinoLightControls.programSwitchLightOff()
-        elif (signal[0] == "Disconnect Arduino"):
-            self.widgetArduinoLightControls.programDisconnectArduino()
 
     def sendProgramCameraSignal(self, signal):
         if signal[0] == "Connect Camera":
@@ -124,7 +109,6 @@ class CentralWidget(QWidget):
             self.widgetStatus.hide()
             self.widgetCameraControls.hide()
             self.widgetCameraDisplay.hide()
-            self.widgetArduinoLightControls.hide()
             self.widgetProgramControls.hide()
             self.widgetCameraDisplay.restoreMaximizedGeometry()
             self.mainWidgetLayout.addWidget(self.widgetCameraDisplay, 0, 0, 11, 10)
@@ -135,7 +119,6 @@ class CentralWidget(QWidget):
             self.widgetGantryControls.show()
             self.widgetStatus.show()
             self.widgetCameraDisplay.show()
-            self.widgetArduinoLightControls.show()
             self.widgetProgramControls.show()
             self.widgetCameraDisplay.restoreMinimizedGeometry()
             self.mainWidgetLayout.addWidget(self.widgetCameraDisplay, 2, 4, 7, 6)
