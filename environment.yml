@@ -1,0 +1,5 @@
+# environment.yml
+name: Elly
+dependencies:
+  - python
+  - numpy
