@@ -86,7 +86,7 @@ class CameraThread(QThread):
         except:
             pass
         else:
-            self.hcam.close()
+            self.hcam.release()
             self.cameraName = None
             self.cameraNameSignal.emit(0)
             print("ELLY:    Camera disconnected")
