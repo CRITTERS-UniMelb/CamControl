@@ -5,11 +5,12 @@
 ## ---------------------------------------------------------------------------------------
 
 # Import packages
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
 import os
 import sys
+
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 # Import the main GUI component
 from widget_main import CentralWidget
@@ -36,11 +37,11 @@ class MyMainWindow(QMainWindow):
         # Create top menu bar
         mainMenu = self.menuBar()
         # File subMenu
-        fileMenu = mainMenu.addMenu('File')
+        mainMenu.addMenu('File')
         # Edit subMenu
-        editMenu = mainMenu.addMenu('Edit')
+        mainMenu.addMenu('Edit')
         # Help subMenu
-        helpMenu = mainMenu.addMenu('Help')
+        mainMenu.addMenu('Help')
 
     # Launches the main widget of the GUI
     def initCentralWidget(self):
