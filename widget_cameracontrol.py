@@ -1,35 +1,45 @@
 # Import packages
-from ctypes import alignment
+import os
+import time
+from datetime import datetime
+
+from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from datetime import datetime
-import time
-import os
-
 
 # Import local scripts
+import stylesheets
 from thread_camera import CameraThread
 from thread_cameraTimer import CameraTimer
 from thread_videoRecorder import VideoRecorder
-import stylesheets
 
+
+# Set up camera control widget class
 class CameraControlWidget(QGroupBox):
-
-    # cameraInitialisation = pyqtSignal(object)
+    
+    # Set up signals for camera display image, display show/hide toggle,
+    # connection status, and camera action
     cameraDisplayImage = pyqtSignal(object)
     cameraShowHideDisplay = pyqtSignal(int)
     cameraConnectionStatus = pyqtSignal(object)
     cameraCurrentAction = pyqtSignal(object)
 
+    # Set initiation commands
     def __init__(self):
+        # Give access to parent methods
         super().__init__()
+        # Set default for camera action indicators
         self.cameraSnapping = 0
         self.cameraRecording = 0
+        # Set camera frames as empty 
         self.cameraFrames = []
+        # Initialise video counter to 1
         self.savedVideoCounter = 1
-        self.savedVideoNumber = "{0:04d}".format(self.savedVideoCounter)
+        # Format video numbers 
+        self.savedVideoNumber = f"{self.savedVideoCounter:04d}"
+        # Set camera connection status to off
         self.cameraConnected = 0
+        # Run syle functions
         self.makeStylesheet()
         self.makeLayouts()
         self.makeFonts()
@@ -37,16 +47,18 @@ class CameraControlWidget(QGroupBox):
         self.makeInputs()
         self.makeButtons()
     
+    # Define widget outline viduals
     def makeStylesheet(self):
         self.setStyleSheet("""
                 QGroupBox{border: 1px solid black; border-radius: 5px; background-color:white}
                 """)
 
+    # Define camera control layout
     def makeLayouts(self):
-        # Main Layout
+        # Set main over-arching layout as a box
         self.cameraWidgetLayout = QHBoxLayout(self)
 
-        # Left Column Layout
+        # Add a left column to the main layout
         self.cameraWidgetLayout_LeftColumn = QVBoxLayout()
         self.cameraWidgetLayout_LeftColumn.setAlignment(Qt.AlignTop)
         self.cameraWidgetLayout.addLayout(self.cameraWidgetLayout_LeftColumn)
@@ -54,16 +66,18 @@ class CameraControlWidget(QGroupBox):
         # Add a vertical line separator between both columns
         self.cameraWidgetLayout.addWidget(stylesheets.VLine())
 
-        # Right Column Layout
+        # Add a right column to the main layout
         self.cameraWidgetLayout_RightColumn = QVBoxLayout()
         self.cameraWidgetLayout_RightColumn.setAlignment(Qt.AlignTop)
         self.cameraWidgetLayout.addLayout(self.cameraWidgetLayout_RightColumn)
 
+    # Method for setting application fonts
     def makeFonts(self):
         futuraheavyfont = QFontDatabase.addApplicationFont(os.path.join(os.path.dirname(__file__), 'font/Futura/Futura Heavy font.ttf'))
         self.futuraheavyfont_str = QFontDatabase.applicationFontFamilies(futuraheavyfont)[0]
         self.buttonFont = QFont("Sans Serif 10", 10)
 
+    # Method to create paths for snapshots & videos (if not already existing)
     def makeDirectories(self):
         self.snapPath = os.path.join(os.path.dirname(__file__), 'snapshots')
         if not os.path.exists(self.snapPath):
@@ -71,69 +85,98 @@ class CameraControlWidget(QGroupBox):
         self.videoPath = os.path.join(os.path.dirname(__file__), 'videos')
         if not os.path.exists(self.videoPath):
             os.makedirs(self.videoPath)
+        # Set default output directory to the automatically created video path
         self.cameraOutputVideoDirectory = self.videoPath
 
+    # Method for defining the camera control inputs
     def makeInputs(self):
         # Title
+        # Create title box and add to left column of parent inputs layout
         self.cameraWidget_Title = QLabel("Camera")
         self.cameraWidget_Title.setFont(QFont(self.futuraheavyfont_str, 16))
         self.cameraWidgetLayout_LeftColumn.addWidget(self.cameraWidget_Title, alignment=Qt.AlignCenter)
 
-        # ComboBoxes Layout
+        # Create box for parameters
         self.cameraWidgetParametersLayout = QGridLayout()
         self.cameraWidgetParametersLayout.setAlignment(Qt.AlignTop)
+        # Add to left column of parent inputs layout
         self.cameraWidgetLayout_LeftColumn.addLayout(self.cameraWidgetParametersLayout)
         
         # Camera Selection
+        # Create camera selection label and set size, add to parameter layout
         self.cameraWidget_CameraSelectionLabel = QLabel("Camera Selection:")
         self.cameraWidget_CameraSelectionLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_CameraSelectionLabel, 0, 0, 1, 1, alignment=Qt.AlignTop)
+        # Create drop-down box for camera selection
         self.cameraWidget_CameraSelection = QComboBox()
         self.cameraWidget_CameraSelection.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        # Define camera options
         self.cameraWidget_CameraSelection.addItems(["CAM1 - XCAM4K8MPA - GXCAM HiChrome-HR4", "CAM2 - XCAM4K16MPA - GXCAM HiChrome-HR4 Hi Res", "CAM3 - XCAM4K16MPA - GXCAM HiChrome-HR4"])
+        # Set camera default to 2nd option
         self.cameraWidget_CameraSelection.setCurrentIndex(1)
+        # Connect to function for changing camera
         self.cameraWidget_CameraSelection.currentIndexChanged.connect(self.cameraSelectionChanged)
+        # Add to parameters layout
         self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_CameraSelection, 0, 1, 1, 1, alignment=Qt.AlignTop)
 
         # Resolution Selection
+        # Create camera selection label and set size, add to parameter layout
         self.cameraWidget_CameraResolutionLabel = QLabel("Camera Resolution:")
         self.cameraWidget_CameraResolutionLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_CameraResolutionLabel, 2, 0, 1, 1, alignment=Qt.AlignTop)
+        # Create drop-down menu for resolution
         self.cameraWidget_CameraResolution = QComboBox()
         self.cameraWidget_CameraResolution.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        # Define resolution options
         self.cameraWidget_CameraResolution.addItems(["5440x3060"])
+        # Set default option
         self.cameraWidget_CameraResolution.setCurrentIndex(0)
+        # Connect to function for changing resolution
         self.cameraWidget_CameraResolution.currentIndexChanged.connect(self.cameraResolutionChanged)
+        # Add to parameters layout
         self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_CameraResolution, 2, 1, 1, 1, alignment=Qt.AlignTop)
 
         # Video Directory
+        # Create vid directory label and set size, add to parameter layout
         self.cameraWidget_VideoDirectoryLabel = QLabel("Video Directory:")
         self.cameraWidget_VideoDirectoryLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_VideoDirectoryLabel, 3, 0, 1, 1, alignment=Qt.AlignTop)
+        # Add push-button for choosing directory
         self.cameraWidget_VideoDirectoryButton = QPushButton("Change...")
         self.cameraWidget_VideoDirectoryButton.setToolTip(str(self.videoPath))
         self.cameraWidget_VideoDirectoryButton.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        # Connect push-button to output selector function
         self.cameraWidget_VideoDirectoryButton.clicked.connect(self.selectCameraOutputVideoDirectory)
+        # Add to parameters layout
         self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_VideoDirectoryButton, 3, 1, 1, 1, alignment=Qt.AlignTop)
 
         # Video Name
+        # Create vid name label and set size, add to parameter layout
         self.cameraWidget_VideoNameLabel = QLabel("Video Name:")
         self.cameraWidget_VideoNameLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_VideoNameLabel, 4, 0, 1, 1, alignment=Qt.AlignTop)
+        # Create editable line input
         self.cameraWidget_VideoNameEntry = QLineEdit()
-        self.cameraWidget_VideoNameEntry.setText(str(datetime.now().strftime("%Y-%m-%d")+"_"+"Video{}".format(self.savedVideoNumber)))
+        # Set default to current date and video number
+        self.cameraWidget_VideoNameEntry.setText(str(datetime.now().astimezone().strftime("%Y-%m-%d")+"_"+f"Video{self.savedVideoNumber}"))
         self.cameraWidget_VideoNameEntry.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        # Add to parameters layout
         self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_VideoNameEntry, 4, 1, 1, 1, alignment=Qt.AlignTop)
 
         # Video Encoding
+        # Create video encoding label, set size, and add to parameter layout
         self.cameraWidget_VideoEncodingLabel = QLabel("Video Encoding:")
         self.cameraWidget_VideoEncodingLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_VideoEncodingLabel, 5, 0, 1, 1, alignment=Qt.AlignTop)
+        # Create drop-down menu
         self.cameraWidget_VideoEncoding = QComboBox()
         self.cameraWidget_VideoEncoding.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.cameraWidget_VideoEncoding.addItems([".avi (MJPEG)", ".mp4 (H264)"])
+        # Set default to AVI
         self.cameraWidget_VideoEncoding.setCurrentIndex(0)
+        # Connect to function to update video encoding
         self.cameraWidget_VideoEncoding.currentIndexChanged.connect(self.cameraVideoEncodingChanged)
+        # Add to parameters layout
         self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_VideoEncoding, 5, 1, 1, 1, alignment=Qt.AlignTop)
 
         # Auto-exposure

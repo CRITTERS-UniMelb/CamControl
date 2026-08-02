@@ -11,7 +11,7 @@ import stylesheets
 from thread_gantryMain import GantryMain
 
 
-# set up control widget class
+# Set up gantry control widget class
 class GantryControlWidget(QGroupBox):
 
     # Set up signals for gantry connection, current action, and current location
