@@ -63,18 +63,12 @@ class CameraDisplayWidget(QGroupBox):
         self.cameraWidget_CameraImage.setAlignment(Qt.AlignCenter)
         self.cameraDisplay_ImageDisplayLayout.addWidget(self.cameraWidget_CameraImage, 0, 0, 1, 1)
     
-    # def emitCameraDisplayDims(self, signal):
-    #     if (signal == "Get Widget Dimensions"):
-    #         self.cameraDisplayDims.emit([self.cameraWidget_CameraImageBG.width(), self.cameraWidget_CameraImageBG.height()])
-    #         if self.minimizedSizes is False:
-    #             self.minimizedWidth = self.cameraWidget_CameraImageBG.width()
-    #             self.minimizedHeight = self.cameraWidget_CameraImageBG.height()
-    #             self.minimizedSizes = True
-    #     elif (signal == "Restore Widget Dimensions"):
-    #         self.cameraDisplayDims.emit([self.minimizedWidth, self.minimizedHeight])
-    
+
     def updateCameraDisplayImage(self, image):
+
         if (self.fullScreen == 0):
+            if self.minimizedSizes is False:
+                self.calculateMinimizedGeometry()
             imageScaled = image.scaled(self.imageMinimizedWidth, self.imageMinimizedHeight, Qt.KeepAspectRatio)
         elif (self.fullScreen == 1):
             imageScaled = image.scaled(self.cameraWidget_CameraImage.width(), self.cameraWidget_CameraImage.height(), Qt.KeepAspectRatio)
