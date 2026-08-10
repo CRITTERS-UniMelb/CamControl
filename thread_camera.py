@@ -48,10 +48,14 @@ class CameraThread(QThread):
 
 
     def run(self):
-        while self.hcam.isOpened():
-            _,frame = self.hcam.read()
-            frame = self.cvimage_to_label(frame)
-            self.cameraImage.emit(frame)
+        while self.running:
+            ret,frame = self.hcam.read()
+            if ret:
+                self.frame = frame.copy()
+                frame = self.cvimage_to_label(frame)
+                self.cameraImage.emit(frame)
+        if self.hcam:
+            self.hcam.release()
         
     def cvimage_to_label(self,image):
         image = imutils.resize(image,width = 640)
@@ -81,13 +85,9 @@ class CameraThread(QThread):
 
     def stop(self):
         self.running = False
-        try:
-            self.hcam
-        except:
-            pass
-        else:
-            self.hcam.release()
-            self.cameraName = None
-            self.cameraNameSignal.emit(0)
-            print("ELLY:    Camera disconnected")
+        self.cameraNameSignal.emit(0)
+        print("ELLY:    Camera disconnected")
+        self.quit()
+        self.wait()
+        
             
