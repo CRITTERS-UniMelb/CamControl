@@ -358,7 +358,7 @@ class CameraControlWidget(QGroupBox):
             self.cameraWidget_CameraResolution.addItems(["5472x3648"])
             self.cameraWidget_CameraResolution.setCurrentIndex(0)
 
-
+    # Empty methods for changing resolution and encoding
     def cameraResolutionChanged(self):
         pass
 
@@ -366,85 +366,100 @@ class CameraControlWidget(QGroupBox):
         pass
 
 
+    # Define method for changing auto-exposure
     def changeAutoExpo(self):
-        if (self.cameraConnected == 1):
-            if self.cameraThread:
-                self.cameraThread.changeAutoExposure(self.cameraWidget_AutoExpo.isChecked())
+        # If a camera is connected, set auto-exposure to on
+        if (self.cameraConnected == 1) and (self.cameraThread):
+            self.cameraThread.changeAutoExposure(self.cameraWidget_AutoExpo.isChecked())
 
+        # If autoexposure is not checked, enable exposure time
         if self.cameraWidget_AutoExpo.isChecked() is False:
             self.cameraWidget_ExposureTime.setEnabled(True)
             self.cameraWidget_ExposureTimeSpin.setEnabled(True)
+        # If autoexposure is checked, disable exposure time
         else:
             self.cameraWidget_ExposureTime.setValue(33)
             self.cameraWidget_ExposureTime.setEnabled(False)
             self.cameraWidget_ExposureTimeSpin.setEnabled(False)
 
 
+    # Define method for changing exposure time
     def updateExposureTime(self):
-        if (self.cameraConnected == 1):
-            if self.cameraThread:
-                self.cameraThread.changeExposureTime(int(self.cameraWidget_ExposureTime.value()))
+        if (self.cameraConnected == 1) and (self.cameraThread):
+            self.cameraThread.changeExposureTime(int(self.cameraWidget_ExposureTime.value()))
     
+    # Define method for changing exposure time
     def updateExposureTimeLabel(self):
         self.cameraWidget_ExposureTimeSpin.setValue(int(self.cameraWidget_ExposureTime.value()))
         self.updateExposureTime()
 
+    # Update spin selector for exposure time
     def updateExposureTimeSpin(self):
         self.cameraWidget_ExposureTime.setValue(self.cameraWidget_ExposureTimeSpin.value())
 
-
+    #  Function to update video output directory
     def selectCameraOutputVideoDirectory(self):
         self.cameraOutputVideoDirectory = QFileDialog.getExistingDirectory(self, "Select folder directory where to save videos", "")
+        # If already has one - set tooltip to directory.
         if self.cameraOutputVideoDirectory != "":
             self.cameraWidget_VideoDirectoryButton.setToolTip(str(self.cameraOutputVideoDirectory))
+        # If doesn't have one - set to self.videopath
         else:
             self.cameraOutputVideoDirectory = self.videoPath
             self.cameraWidget_VideoDirectoryButton.setToolTip(str(self.videoPath))
 
-
-    # def updateCameraDisplayDims(self, dims):
-    #     self.cameraDisplayWidth = dims[0]
-    #     self.cameraDisplayHeight = dims[1]
-
-
+    # Function to update the camera image displayed
     def updateCameraDisplayImage(self, image):
         img = image.copy()
+        # If snapping images:
         if (self.cameraSnapping == 1):
-            dt_string = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+            dt_string = datetime.now().astimezone().strftime("%Y-%m-%d-%H-%M-%S")
+            # Flip image
             snap = img.mirrored(False,True)
-            snap.save("snapshots/{}.jpg".format(dt_string))
+            # Save with dateime
+            snap.save(f"snapshots/{dt_string}.jpg" "snapshots/{}.jpg")
             self.cameraCurrentAction.emit("Screenshot Saved")
             self.cameraSnapping = 0
             self.cameraCurrentAction.emit("Live Streaming")
+        # If actively recording:
         if (self.cameraRecording == 1):
-            # print("recording image {}".format(len(self.cameraFrames)))
+            # Add image to camera frames
             self.cameraFrames.append(img)
-
+        # Show camera image
         self.cameraDisplayImage.emit(image)
 
+    # Function to launch video recording thread
     def makeVideo(self, videoPackage):
+        # Set encoding method
         encodingMethod = self.cameraWidget_VideoEncoding.currentIndex()
+        # Save as either MP4 or AVI
         if (encodingMethod == 1):
             videoName = str(self.cameraWidget_VideoNameEntry.text() + ".mp4")
         else:
             videoName = str(self.cameraWidget_VideoNameEntry.text() + ".avi")
+        # Create full filepath
         videoDirectory = str(self.cameraOutputVideoDirectory)
         videoPath = os.path.join(videoDirectory, videoName)
+        # Create thread with video recorder function
         self.videoRecorderThread = VideoRecorder(videoPackage, videoPath, encodingMethod)
+        # Allow thread to connect with recorder action
         self.videoRecorderThread.currentAction.connect(self.updateRecorderAction)
+        # Start thread
         self.videoRecorderThread.start()
     
+    # Once video is saved, add to counter and reset camera frames
     def updateRecorderAction(self, action):
         if (action =="Video saved"):
             self.cameraCurrentAction.emit("Video Saved")
             self.savedVideoCounter += 1
-            self.savedVideoNumber = "{0:04d}".format(self.savedVideoCounter)
-            self.cameraWidget_VideoNameEntry.setText(str(datetime.now().strftime("%Y-%m-%d")+"_"+"Video{}".format(self.savedVideoNumber)))
+            self.savedVideoNumber = f"{self.savedVideoCounter:04d}"
+            self.cameraWidget_VideoNameEntry.setText(str(datetime.now().astimezone().strftime("%Y-%m-%d")+"_"+f"Video{self.savedVideoNumber}"))
             self.cameraWidget_ConnectButton.setEnabled(True)
             self.cameraWidget_RecordButton.setText("Record")
             self.cameraWidget_RecordButton.setEnabled(True)
             # Reinitializing the object storing the frames
             self.cameraFrames = []
+            # If camera still connected, resume live streaming
             if self.cameraConnected == 1:
                 self.cameraWidget_SnapButton.setEnabled(True)
                 self.cameraWidget_RecordButton.setEnabled(True)
@@ -454,45 +469,50 @@ class CameraControlWidget(QGroupBox):
                 self.cameraWidget_RecordButton.setEnabled(False)
                 self.cameraCurrentAction.emit("Disconnected")
 
-
+    # Function for connecting camera as part of program
     def programConnectCamera(self):
         if (self.cameraConnected == 0):
             self.connectCamera()
         else:
             pass
     
+    # Function for disconnecting camera as part of program
     def programDisconnectCamera(self):
         if (self.cameraConnected == 1):
             self.connectCamera()
         else:
             pass
     
+    # Function for updating camera parameters as part of a program
     def programUpdateCameraParameters(self):
         # Updating the camera with exposure options
         if (self.cameraConnected == 1):
             if self.cameraThread:
                 self.cameraThread.changeAutoExposure(self.cameraWidget_AutoExpo.isChecked())
-            if self.cameraWidget_AutoExpo.isChecked() is False:
-                if self.cameraThread:
-                    self.cameraThread.changeExposureTime(int(self.cameraWidget_ExposureTime.value()))
+            if (self.cameraWidget_AutoExpo.isChecked() is False) and (self.cameraThread):
+                self.cameraThread.changeExposureTime(int(self.cameraWidget_ExposureTime.value()))
 
-
+    # Begin recording video as part of a program
     def programInitVideoRecord(self, signal):
         programVideoDuration = int(signal[1])
+        # Begin timer for video reocrding
         self.cameraTimer = CameraTimer(programVideoDuration)
+        # Connect to video frame acquire function
         self.cameraTimer.recordingSignal.connect(self.programAcquireVideoFrame)
+        # Initialise timer
         self.cameraTimer.initialization()
         self.cameraTimer.start()
 
-
+    # While program is running, determines when to record video
     def programAcquireVideoFrame(self, signal):
         if signal is True:
             self.cameraRecording = 1
         if signal is False:
             self.cameraRecording = 0
     
+    # Function to finish recording as part of a program
     def programFinalizeVideoRecord(self, signal):
-            print("ELLY:    Total number of frames in the video is: {} ".format(len(self.cameraFrames)))
+            print(f"ELLY:    Total number of frames in the video is: {len(self.cameraFrames)} ")
             programVideoDuration = int(signal[1])
             if (self.cameraWidget_VideoEncoding.currentIndex() == 1):
                 self.programVideoPath = str(signal[2])+".mp4"
@@ -500,12 +520,14 @@ class CameraControlWidget(QGroupBox):
                 self.programVideoPath = str(signal[2])+".avi"
             programVideoPackage = [self.cameraFrames, 0, programVideoDuration]
             encodingMethod = self.cameraWidget_VideoEncoding.currentIndex()
+            # Start video reocrder thread
             self.programVideoRecorderThread = VideoRecorder(programVideoPackage, self.programVideoPath, encodingMethod)
             self.programVideoRecorderThread.currentAction.connect(self.programVideoSaved)
             self.programVideoRecorderThread.start()
 
+    # Function to declare that a video was saved as part of program
     def programVideoSaved(self, signal):
         if (signal == "Video saved"):
-            print("ELLY:    Video {} saved".format(self.programVideoPath))
+            print(f"ELLY:    Video {self.programVideoPath} saved")
             # Reinitializing the object that stores the frame
             self.cameraFrames = []
