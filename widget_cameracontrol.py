@@ -179,50 +179,59 @@ class CameraControlWidget(QGroupBox):
         # Add to parameters layout
         self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_VideoEncoding, 5, 1, 1, 1, alignment=Qt.AlignTop)
 
-        # Auto-exposure
+        # Auto-exposure checkbox
         self.cameraWidget_AutoExpo = QCheckBox("Auto Exposure")
         self.cameraWidget_AutoExpo.setChecked(True)
+        # Connect to function for updating autoexposure
         self.cameraWidget_AutoExpo.stateChanged.connect(self.changeAutoExpo)
+        # Add to parameters layout
         self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_AutoExpo, 6, 0, 1, 2)
 
         # Exposure Time
+        # Create exposure time label and add to parameter layout
         self.cameraWidget_ExposureTimeLabel = QLabel()
         self.cameraWidget_ExposureTimeLabel.setText("Exposure Time (ms)")
         self.cameraWidget_ExposureTimeLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_ExposureTimeLabel, 7, 0, 1, 1, alignment=Qt.AlignTop)
-
+        # Add exposure time box
         self.cameraWidget_ExposureTimeSelectorLayout = QHBoxLayout()
         self.cameraWidgetParametersLayout.addLayout(self.cameraWidget_ExposureTimeSelectorLayout, 7, 1, 1, 1, alignment=Qt.AlignTop)
-
+        # Add slider for exposure time
         self.cameraWidget_ExposureTime = QSlider(Qt.Horizontal)
         self.cameraWidget_ExposureTime.setEnabled(False)
         self.cameraWidget_ExposureTime.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        # Set possible range from 0 to 200
         self.cameraWidget_ExposureTime.setRange(0, 200)
         self.cameraWidget_ExposureTime.setFocusPolicy(Qt.NoFocus)
         self.cameraWidget_ExposureTime.setPageStep(1)
+        # Set initial value to 33
         self.cameraWidget_ExposureTime.setValue(33)
+        # Connect to functions for updating exposure time
         self.cameraWidget_ExposureTime.valueChanged.connect(self.updateExposureTimeLabel)
         self.cameraWidget_ExposureTime.sliderReleased.connect(self.updateExposureTime)
+        # Add to parameters layout
         self.cameraWidget_ExposureTimeSelectorLayout.addWidget(self.cameraWidget_ExposureTime)
 
+        # Add alternate entry box for exposure time
         self.cameraWidget_ExposureTimeSpin = QDoubleSpinBox()
         self.cameraWidget_ExposureTimeSpin.setEnabled(False)
         self.cameraWidget_ExposureTimeSpin.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        # Set possible range and default
         self.cameraWidget_ExposureTimeSpin.setRange(0, 200)
         self.cameraWidget_ExposureTimeSpin.setSingleStep(1)
         self.cameraWidget_ExposureTimeSpin.setDecimals(0)
         self.cameraWidget_ExposureTimeSpin.setValue(33)
+        # Connect to exposure time change functions
         self.cameraWidget_ExposureTimeSpin.valueChanged.connect(self.updateExposureTimeSpin)
         self.cameraWidget_ExposureTimeSelectorLayout.addWidget(self.cameraWidget_ExposureTimeSpin)
 
-        
+    # Method to define the buttons for camera controls
     def makeButtons(self):
         # Icon
         self.cameraIcon = QLabel()
         cameraIconQPixmap = QPixmap(os.path.join(os.path.dirname(__file__), 'images/icons/camera.png'))
         self.cameraIcon.setPixmap(cameraIconQPixmap)
         self.cameraWidgetLayout_RightColumn.addWidget(self.cameraIcon)
-
 
         # Connect/Disconnect Camera Button
         self.cameraWidget_ConnectButton = QPushButton("Connect")
@@ -231,6 +240,7 @@ class CameraControlWidget(QGroupBox):
         self.cameraWidget_ConnectButton.setFixedWidth(100)
         self.cameraWidget_ConnectButton.setStyleSheet(stylesheets.getQPushButtonStyle1(50))
         self.cameraWidget_ConnectButton.setGraphicsEffect(stylesheets.getQPushButtonStyle1_shadow())
+        # When clicked, run connectCamera function
         self.cameraWidget_ConnectButton.clicked.connect(self.connectCamera)
         self.cameraWidgetLayout_RightColumn.addWidget(self.cameraWidget_ConnectButton)
 
@@ -242,6 +252,7 @@ class CameraControlWidget(QGroupBox):
         self.cameraWidget_SnapButton.setFixedWidth(100)
         self.cameraWidget_SnapButton.setStyleSheet(stylesheets.getQPushButtonStyle1(50))
         self.cameraWidget_SnapButton.setGraphicsEffect(stylesheets.getQPushButtonStyle1_shadow())
+        # When clicked, run snapPicture function
         self.cameraWidget_SnapButton.clicked.connect(self.snapPicture)
         self.cameraWidgetLayout_RightColumn.addWidget(self.cameraWidget_SnapButton)
 
@@ -253,25 +264,26 @@ class CameraControlWidget(QGroupBox):
         self.cameraWidget_RecordButton.setFixedWidth(100)
         self.cameraWidget_RecordButton.setStyleSheet(stylesheets.getQPushButtonStyle1(50))
         self.cameraWidget_RecordButton.setGraphicsEffect(stylesheets.getQPushButtonStyle1_shadow())
+        # When clicked, run recordMovie function
         self.cameraWidget_RecordButton.clicked.connect(self.recordMovie)
         self.cameraWidgetLayout_RightColumn.addWidget(self.cameraWidget_RecordButton)
 
-
+    # Define function to connect camera
     def connectCamera(self):
+        # If not connected, create thread
         if (self.cameraConnected == 0):
-            # # Sending signal to get the size of the widget area where the camera image will be displayed
-            # self.cameraInitialisation.emit("Get Widget Dimensions")
-
-            # Creating the camera thread and its signal connections
+            # Create the camera thread and its signal connections
             self.cameraThread = CameraThread()
             self.cameraThread.cameraNameSignal.connect(self.updateCameraConnection)
             self.cameraThread.cameraImage.connect(self.updateCameraDisplayImage)
             self.cameraThread.connectCamera()
+        # If already connected, disconnect when function is run
         elif (self.cameraConnected == 1):
             self.cameraShowHideDisplay.emit(0)
             if self.cameraThread:
                 self.cameraThread.stop()
 
+    # Define function to update camera connection signal
     def updateCameraConnection(self, cameraName):
         if cameraName is None:
             self.cameraConnected = 0
@@ -305,12 +317,14 @@ class CameraControlWidget(QGroupBox):
                 self.updateExposureTime()
             self.cameraCurrentAction.emit("Live Streaming")
 
-
+    # Define function for snapping picture
     def snapPicture(self):
         self.cameraCurrentAction.emit("Capturing Screenshot")
         self.cameraSnapping = 1
 
+    # Define function for recording video
     def recordMovie(self):
+        # On first run, start recording 
         if (self.cameraRecording == 0):
             self.cameraWidget_ConnectButton.setEnabled(False)
             self.cameraWidget_SnapButton.setEnabled(False)
@@ -318,16 +332,18 @@ class CameraControlWidget(QGroupBox):
             self.cameraRecording = 1
             self.cameraCurrentAction.emit("Recording Video")
             self.videoRecording_TimeInit = time.time()
+        # On second run,  stop recording
         elif (self.cameraRecording == 1):
             self.cameraRecording = 0
             self.videoRecording_TimeFinal = time.time()
             self.cameraWidget_RecordButton.setText("Saving")
             self.cameraWidget_RecordButton.setEnabled(False)
-            print("ELLY:    Total number of frames in the video is: {} ".format(len(self.cameraFrames)))
+            print(f"ELLY:    Total number of frames in the video is: {len(self.cameraFrames)}")
+            # Run make video function
             self.makeVideo((self.cameraFrames, self.videoRecording_TimeInit, self.videoRecording_TimeFinal))
             self.cameraCurrentAction.emit("Saving Video")
 
-
+    # Define function for changing camera
     def cameraSelectionChanged(self):
         if (self.cameraWidget_CameraSelection.currentText() == "CAM1 - XCAM4K8MPA - GXCAM HiChrome-HR4"):
             self.cameraWidget_CameraResolution.clear()
