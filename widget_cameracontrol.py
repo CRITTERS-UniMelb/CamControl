@@ -349,13 +349,13 @@ class CameraControlWidget(QGroupBox):
             self.cameraWidget_CameraResolution.clear()
             self.cameraWidget_CameraResolution.addItems(["3840x2160"])
             self.cameraWidget_CameraResolution.setCurrentIndex(0)
-        elif (self.cameraWidget_CameraSelection.currentText() == "CAM2 - XCAM4K16MPA - GXCAM HiChrome-HR4 Hi Res"):
+        elif (self.cameraWidget_CameraSelection.currentText() == "CAM2 - XCAM4K16MPA - GXCAM HiChrome-HR4 Hi Res") or (self.cameraWidget_CameraSelection.currentText() == "CAM3 - XCAM4K16MPA - GXCAM HiChrome-HR4"):
             self.cameraWidget_CameraResolution.clear()
             self.cameraWidget_CameraResolution.addItems(["5440x3060"])
             self.cameraWidget_CameraResolution.setCurrentIndex(0)
-        elif (self.cameraWidget_CameraSelection.currentText() == "CAM3 - XCAM4K16MPA - GXCAM HiChrome-HR4"):
+        elif (self.cameraWidget_CameraSelection.currentText() == "Tucsen MIchrome 20"):
             self.cameraWidget_CameraResolution.clear()
-            self.cameraWidget_CameraResolution.addItems(["5440x3060"])
+            self.cameraWidget_CameraResolution.addItems(["5472x3648"])
             self.cameraWidget_CameraResolution.setCurrentIndex(0)
 
 
