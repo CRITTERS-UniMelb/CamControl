@@ -1,12 +1,13 @@
 # Import packages
-from ctypes import alignment
+import os
+
+from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-import os
 
 # Import local scripts
 import stylesheets
+
 
 class StatusWidget(QGroupBox):
     def __init__(self):
@@ -183,9 +184,7 @@ class StatusWidget(QGroupBox):
             self.statusWidget_GantryActionStatus.setStyleSheet("color: orange;")
         elif (action == "moving"):
             self.statusWidget_GantryActionStatus.setText("Moving...")
-            #to X={} and Y={}...".format(location[0], location[1]))
             self.statusWidget_GantryActionStatus.setStyleSheet("color: orange;")
-            pass
         elif (action == "referencing"):
             self.statusWidget_GantryActionStatus.setText("Referencing axes...")
             self.statusWidget_GantryActionStatus.setStyleSheet("color: orange;")
@@ -196,7 +195,7 @@ class StatusWidget(QGroupBox):
             self.statusWidget_GantryCoords.setText("NA")
             self.statusWidget_GantryCoords.setStyleSheet("color: red;")
         else:
-            self.statusWidget_GantryCoords.setText("X={};Y={}".format(coords[0],coords[1]))
+            self.statusWidget_GantryCoords.setText(f"X={coords[0]};Y={coords[1]}")
             self.statusWidget_GantryCoords.setStyleSheet("color: green;")
     
 
@@ -215,7 +214,7 @@ class StatusWidget(QGroupBox):
             self.statusWidget_cameraActionStatus.setStyleSheet("color: red;")
         else:
             self.cameraConnected = 1
-            self.statusWidget_CameraConnectionStatus.setText("{} - Connected".format(status))
+            self.statusWidget_CameraConnectionStatus.setText(f"{status} - Connected")
             self.statusWidget_CameraConnectionStatus.setStyleSheet("color: green;")
             self.statusWidget_cameraActionStatus.setText("Connected")
             self.statusWidget_cameraActionStatus.setStyleSheet("color: green;")
