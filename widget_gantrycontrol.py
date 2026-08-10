@@ -75,8 +75,10 @@ class GantryControlWidget(QGroupBox):
     # Method for setting application fonts
     def makeFonts(self):
         futuraheavyfont = QFontDatabase.addApplicationFont(os.path.join(os.path.dirname(__file__), 'font/Futura/Futura Heavy font.ttf'))
+        futuralightfont = QFontDatabase.addApplicationFont(os.path.join(os.path.dirname(__file__), 'font/Futura/Futura Light font.ttf'))
         self.futuraheavyfont_str = QFontDatabase.applicationFontFamilies(futuraheavyfont)[0]
-        self.buttonFont = QFont("Sans Serif 10", 10)
+        self.futuralightfont_str = QFontDatabase.applicationFontFamilies(futuralightfont)[0]
+        self.buttonFont = QFont(self.futuralightfont_str, 10)
 
     # Method for loading the gantry symbol
     def makeIcon(self):
