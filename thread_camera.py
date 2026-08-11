@@ -47,6 +47,7 @@ class CameraThread(QThread):
 
 
     def run(self):
+        self.connectCamera()
         while self.running:
             ret,frame = self.hcam.read()
             if ret:

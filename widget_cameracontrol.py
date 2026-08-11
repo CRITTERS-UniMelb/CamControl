@@ -278,7 +278,8 @@ class CameraControlWidget(QGroupBox):
             self.cameraThread = CameraThread()
             self.cameraThread.cameraNameSignal.connect(self.updateCameraConnection)
             self.cameraThread.cameraImage.connect(self.updateCameraDisplayImage)
-            self.cameraThread.connectCamera()
+            # Starting the camera thread to start the live streaming
+            self.cameraThread.start()
         # If already connected, disconnect when function is run
         elif (self.cameraConnected == 1):
             self.cameraShowHideDisplay.emit(0)
@@ -311,8 +312,6 @@ class CameraControlWidget(QGroupBox):
             # Enabling the options to snap and record the live stream
             self.cameraWidget_SnapButton.setEnabled(True)
             self.cameraWidget_RecordButton.setEnabled(True)
-            # Starting the camera thread to start the live streaming
-            self.cameraThread.start()
             time.sleep(0.1)
             self.changeAutoExpo()
             if self.cameraWidget_AutoExpo.isChecked() is False:
