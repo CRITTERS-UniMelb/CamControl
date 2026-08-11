@@ -1,10 +1,9 @@
 # Import packages
-from PyQt6.QtGui import *
-from PyQt6.QtWidgets import *
-from PyQt6.QtCore import *
-import time
 import cv2
 import imutils
+from PyQt6.QtCore import *
+from PyQt6.QtGui import *
+from PyQt6.QtWidgets import *
 
 # Import local scripts
 
@@ -78,8 +77,7 @@ class CameraThread(QThread):
                 self.autoExposure = False
     
     def changeExposureTime(self, time):
-        if self.hcam is not None:
-            if self.autoExposure is False:
+        if (self.hcam is not None) and (self.autoExposure is False):
                 self.hcam.put(uvcham.UVCHAM_EXPOTIME, time)
 
 

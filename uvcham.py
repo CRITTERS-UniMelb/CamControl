@@ -3,7 +3,8 @@ Win32:
     (a) x86: XP SP3 or above; CPU supports SSE2 instruction set or above
     (b) x64: Win7 or above
 """
-import sys, ctypes, os.path
+import ctypes
+import os.path
 
 """
 ************************************************************************
@@ -189,7 +190,7 @@ class Uvcham:
         a = (cls.__Device * UVCHAM_MAX)()
         n = cls.__lib.Uvcham_enum(a)
         arr = []
-        for i in range(0, n):
+        for i in range(n):
             arr.append(cls.__convertDevice(a[i]))
         return arr
 

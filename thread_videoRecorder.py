@@ -1,10 +1,9 @@
 # Import packages
+import cv2
+import numpy as np
+from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
-from PyQt6.QtCore import *
-import numpy as np
-import cv2
-import os
 
 # Import local scripts
 
@@ -44,8 +43,8 @@ class VideoRecorder(QThread):
                 height = self.cameraFrames[i].height()
                 size = (width, height)
             # Code to activate if willing to save image frames
-            imageNumber = "{0:06d}".format(i)
-            self.cameraFrames[i].save("snapshots/frame{}.jpg".format(imageNumber))
+            imageNumber = f"{i:06d}"
+            self.cameraFrames[i].save(f"snapshots/frame{imageNumber}.jpg")
             cv2Frame = self.convertQImageToMat(self.cameraFrames[i])
             self.cv2CameraFrames.append(cv2Frame)
         self.currentAction.emit("Saving video...")
