@@ -36,7 +36,7 @@ motionTypeJointCMD=bytearray(motionTypeJointMessageEncoded)
 
 # Function move to specified X and Y command
 def moveTo(x, y):
-    moveMessage = f"CRISTART 1234 CMD Move Joint {x} {y} 0 0 0 0 0 0 0 30 CRIEND"
+    moveMessage = "CRISTART 1234 CMD Move Joint {} {} 0 0 0 0 0 0 0 30 CRIEND".format(x, y)
     moveMessageEncoded = moveMessage.encode('utf-8')
     moveCMD = bytearray(moveMessageEncoded)
     return moveCMD

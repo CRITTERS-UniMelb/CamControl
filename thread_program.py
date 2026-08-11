@@ -1,11 +1,10 @@
 # Import packages
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from datetime import datetime
 import os
 import time
-from datetime import datetime
-
-from PyQt6.QtCore import *
-from PyQt6.QtGui import *
-from PyQt6.QtWidgets import *
 
 # Import local scripts
 
@@ -33,14 +32,14 @@ class ProgramThread(QThread):
         self.loopCounter = 0  # This counter evaluates whether or not all loops (one loop per time input) were performed
 
     def run(self):
-        print(f"ELLY:    Starting my automated program composed of {len(self.timesDF)} time loops")
-        print(f"ELLY:    Next loop planned at: {self.timesDF[self.loopCounter]}")
+        print("ELLY:    Starting my automated program composed of {} time loops".format(len(self.timesDF)))
+        print("ELLY:    Next loop planned at: {}".format(self.timesDF[self.loopCounter]))
         while self.loopCounter < len(self.timesDF):
-            now = datetime.now().astimezone()
+            now = datetime.now()
             now = str(now)
             if now.startswith(self.timesDF[self.loopCounter]):
-                print(f"ELLY:    Starting loop {self.loopCounter+1}/{len(self.timesDF)}")
-                print(f"ELLY:    Loop time is: {self.timesDF[self.loopCounter]} and current time is {now}")
+                print("ELLY:    Starting loop {}/{}".format(self.loopCounter+1, len(self.timesDF)))
+                print("ELLY:    Loop time is: {} and current time is {}".format(self.timesDF[self.loopCounter], now))
 
                 # If gantry is required, we run the camera and ring light loop within the gantry loop
                 if self.useGantry is True:
@@ -59,10 +58,60 @@ class ProgramThread(QThread):
                         patchYcoordinate = moveCommand[1]
                         movingTime = moveCommand[2]
                         patchID = moveCommand[3]
-                        print(f"ELLY:    Moving gantry to {patchID} (X={patchXcoordinate};Y={patchYcoordinate})")
+                        print("ELLY:    Moving gantry to {} (X={};Y={})".format(patchID, patchXcoordinate, patchYcoordinate))
                         self.programGantrySignal.emit(["Move", patchXcoordinate, patchYcoordinate, movingTime])
                         time.sleep(movingTime + 2)
-                        if (self.useCamera is True) and (self.recordVideo is True):
+                        if self.useCamera is True:
+                            if self.recordVideo is True:
+                                if self.useRingLight is True:
+                                    # First connect to the Arduino
+                                    print("ELLY:    Connecting to the Arduino (Ring Light)")
+                                    self.programArduinoSignal.emit(["Connect Arduino"])
+                                    time.sleep(5)
+                                    # Then swith on the ring light linked to the Arduino
+                                    print("ELLY:    Turning ON the Ring Light (Arduino)")
+                                    self.programArduinoSignal.emit(["Turn Light On"])
+                                    time.sleep(2)
+                                # Then connect to the camera
+                                print("ELLY:    Connecting to the camera")
+                                self.programCameraSignal.emit(["Connect Camera"])
+                                time.sleep(5)
+                                # Then start video recording
+                                print("ELLY:    Recording video (duration: {})".format(self.videoDuration))
+                                self.programCameraSignal.emit(["Start Video Recording", self.videoDuration])
+                                time.sleep(self.videoDuration + 5)
+                                # Then disconnect the camera
+                                print("ELLY:    Disconnecting the camera")
+                                self.programCameraSignal.emit(["Disconnect Camera"])
+                                time.sleep(2)
+                                if self.useRingLight is True:
+                                    # Then swith off the ring light linked to the Arduino
+                                    print("ELLY:    Turning OFF the Ring Light (Arduino)")
+                                    self.programArduinoSignal.emit(["Turn Light Off"])
+                                    time.sleep(2)
+                                    # Then disconnect to the Arduino
+                                    print("ELLY:    Disconnecting the Arduino (Ring Light)")
+                                    self.programArduinoSignal.emit(["Disconnect Arduino"])
+                                    time.sleep(2)
+                                # Then save the video
+                                videoDate, videoTime = self.timesDF[self.loopCounter].split(" ")
+                                videoYear, videoMonth, videoDay = videoDate.split("-")
+                                videoHour, videoMinute = videoTime.split(":")
+                                videoName = str(videoYear + "_" + videoMonth + "_" + videoDay + "_" + videoHour + "_" + videoMinute + "_" + patchID)
+                                videoPath = os.path.join(self.videoDirectory, videoName)
+                                print("ELLY:    Saving the video {}".format(videoPath))
+                                self.programCameraSignal.emit(["Save Video", self.videoDuration, videoPath])
+                                time.sleep(4*self.videoDuration)
+                                print("ELLY:    Finished all actions related to {} at time {}".format(patchID, self.timesDF[self.loopCounter]))
+                                time.sleep(1)
+                    print("ELLY:    Finished loop {}/{}".format(self.loopCounter+1, len(self.timesDF)))
+                    # Disconnecting the gantry
+                    print("ELLY:    Disconnecting the gantry")
+                    self.programGantrySignal.emit(["Disconnect"])
+                    time.sleep(1)
+                elif self.useGantry is False:
+                    if self.useCamera is True:
+                        if self.recordVideo is True:
                             if self.useRingLight is True:
                                 # First connect to the Arduino
                                 print("ELLY:    Connecting to the Arduino (Ring Light)")
@@ -77,7 +126,7 @@ class ProgramThread(QThread):
                             self.programCameraSignal.emit(["Connect Camera"])
                             time.sleep(5)
                             # Then start video recording
-                            print(f"ELLY:    Recording video (duration: {self.videoDuration})")
+                            print("ELLY:    Recording video (duration: {})".format(self.videoDuration))
                             self.programCameraSignal.emit(["Start Video Recording", self.videoDuration])
                             time.sleep(self.videoDuration + 5)
                             # Then disconnect the camera
@@ -97,65 +146,17 @@ class ProgramThread(QThread):
                             videoDate, videoTime = self.timesDF[self.loopCounter].split(" ")
                             videoYear, videoMonth, videoDay = videoDate.split("-")
                             videoHour, videoMinute = videoTime.split(":")
-                            videoName = str(videoYear + "_" + videoMonth + "_" + videoDay + "_" + videoHour + "_" + videoMinute + "_" + patchID)
+                            videoName = str(videoYear + "_" + videoMonth + "_" + videoDay + "_" + videoHour + "_" + videoMinute)
                             videoPath = os.path.join(self.videoDirectory, videoName)
-                            print(f"ELLY:    Saving the video {videoPath}")
+                            print("ELLY:    Saving the video {}".format(videoPath))
                             self.programCameraSignal.emit(["Save Video", self.videoDuration, videoPath])
                             time.sleep(4*self.videoDuration)
-                            print(f"ELLY:    Finished all actions related to {patchID} at time {self.timesDF[self.loopCounter]}")
+                            print("ELLY:    Finished all actions related to time {}".format(self.timesDF[self.loopCounter]))
                             time.sleep(1)
-                    print(f"ELLY:    Finished loop {self.loopCounter+1}/{len(self.timesDF)}")
-                    # Disconnecting the gantry
-                    print("ELLY:    Disconnecting the gantry")
-                    self.programGantrySignal.emit(["Disconnect"])
-                    time.sleep(1)
-                elif self.useGantry is False:
-                    if (self.useCamera is True) and (self.recordVideo is True):
-                        if self.useRingLight is True:
-                            # First connect to the Arduino
-                            print("ELLY:    Connecting to the Arduino (Ring Light)")
-                            self.programArduinoSignal.emit(["Connect Arduino"])
-                            time.sleep(5)
-                            # Then swith on the ring light linked to the Arduino
-                            print("ELLY:    Turning ON the Ring Light (Arduino)")
-                            self.programArduinoSignal.emit(["Turn Light On"])
-                            time.sleep(2)
-                        # Then connect to the camera
-                        print("ELLY:    Connecting to the camera")
-                        self.programCameraSignal.emit(["Connect Camera"])
-                        time.sleep(5)
-                        # Then start video recording
-                        print(f"ELLY:    Recording video (duration: {self.videoDuration})")
-                        self.programCameraSignal.emit(["Start Video Recording", self.videoDuration])
-                        time.sleep(self.videoDuration + 5)
-                        # Then disconnect the camera
-                        print("ELLY:    Disconnecting the camera")
-                        self.programCameraSignal.emit(["Disconnect Camera"])
-                        time.sleep(2)
-                        if self.useRingLight is True:
-                            # Then swith off the ring light linked to the Arduino
-                            print("ELLY:    Turning OFF the Ring Light (Arduino)")
-                            self.programArduinoSignal.emit(["Turn Light Off"])
-                            time.sleep(2)
-                            # Then disconnect to the Arduino
-                            print("ELLY:    Disconnecting the Arduino (Ring Light)")
-                            self.programArduinoSignal.emit(["Disconnect Arduino"])
-                            time.sleep(2)
-                        # Then save the video
-                        videoDate, videoTime = self.timesDF[self.loopCounter].split(" ")
-                        videoYear, videoMonth, videoDay = videoDate.split("-")
-                        videoHour, videoMinute = videoTime.split(":")
-                        videoName = str(videoYear + "_" + videoMonth + "_" + videoDay + "_" + videoHour + "_" + videoMinute)
-                        videoPath = os.path.join(self.videoDirectory, videoName)
-                        print(f"ELLY:    Saving the video {videoPath}")
-                        self.programCameraSignal.emit(["Save Video", self.videoDuration, videoPath])
-                        time.sleep(4*self.videoDuration)
-                        print(f"ELLY:    Finished all actions related to time {self.timesDF[self.loopCounter]}")
-                        time.sleep(1)
 
                 self.loopCounter += 1
                 if (self.loopCounter+1 <= len(self.timesDF)):
-                    print(f"ELLY:    Next loop planned at: {self.timesDF[self.loopCounter]}")
+                    print("ELLY:    Next loop planned at: {}".format(self.timesDF[self.loopCounter]))
             else:
                 # print(now)
                 time.sleep(1)

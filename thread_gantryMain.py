@@ -1,14 +1,12 @@
 # Import packages
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 import time
-
-from PyQt6.QtCore import *
-from PyQt6.QtGui import *
-from PyQt6.QtWidgets import *
-
-from thread_gantryAddCMD import GantryAddCMD
 
 # Import local scripts
 from thread_gantryCom import GantryCom
+from thread_gantryAddCMD import GantryAddCMD
 
 
 # Thread Class
@@ -19,7 +17,7 @@ class GantryMain(QThread):
     gantryCoords = pyqtSignal(object)
 
     def __init__(self, gantryIP, gantryPort, gantryConnectionStatus):
-        super().__init__()
+        super(GantryMain, self).__init__()
         # Gantry address
         self.gantryAddress = (gantryIP, gantryPort)
 
