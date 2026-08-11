@@ -2,6 +2,7 @@
 import os
 import time
 from datetime import datetime
+from sys import platform
 
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
@@ -9,7 +10,9 @@ from PyQt6.QtWidgets import *
 
 # Import local scripts
 import stylesheets
-from thread_camera import CameraThread
+from thread_camera_native import CameraThread_native
+from thread_camera_uvc import CameraThread_uvc
+from thread_camera_tucam import CameraThread_tucam
 from thread_cameraTimer import CameraTimer
 from thread_videoRecorder import VideoRecorder
 
@@ -24,7 +27,6 @@ class CameraControlWidget(QGroupBox):
     cameraConnectionStatus = pyqtSignal(object)
     cameraCurrentAction = pyqtSignal(object)
     cameraExposure = pyqtSignal(int)
-    driverChoice = pyqtSignal(int)
 
     # Set initiation commands
     def __init__(self):
@@ -118,8 +120,6 @@ class CameraControlWidget(QGroupBox):
         self.cameraWidget_DriverSelection.addItems(["Native OpenCV", "UVC", "Tucam"])
         # Set camera default to 1st option
         self.cameraWidget_DriverSelection.setCurrentIndex(0)
-        # Connect to function for changing driver
-        self.cameraWidget_DriverSelection.currentIndexChanged.connect(self.driverSelectionChanged)
         # Add to parameters layout
         self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_DriverSelection, 0, 1, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
 
@@ -248,10 +248,15 @@ class CameraControlWidget(QGroupBox):
 
     # Define function to connect camera
     def connectCamera(self):
-        # If not connected, create thread
+        # If not connected, create thread based on driver
         if (self.cameraConnected == 0):
-            # Create the camera thread and its signal connections
-            self.cameraThread = CameraThread()
+            if self.cameraWidget_DriverSelection.currentIndex() == 0:
+                self.cameraThread = CameraThread_native()
+            elif self.cameraWidget_DriverSelection.currentIndex() == 1:
+                self.cameraThread = CameraThread_uvc()
+            elif self.cameraWidget_DriverSelection.currentIndex() == 2:
+                self.cameraThread = CameraThread_tucam()
+            # Add its signal connections
             self.cameraThread.cameraNameSignal.connect(self.updateCameraConnection)
             self.cameraThread.cameraImage.connect(self.updateCameraDisplayImage)
             self.cameraExposure.connect(self.cameraThread.changeExposureTime)

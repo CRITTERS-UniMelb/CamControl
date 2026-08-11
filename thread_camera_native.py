@@ -8,7 +8,7 @@ from PyQt6.QtWidgets import *
 # Import local scripts
 
 
-class CameraThread(QThread):
+class CameraThread_native(QThread):
 
     cameraImage = pyqtSignal(object)
     cameraNameSignal = pyqtSignal(object)

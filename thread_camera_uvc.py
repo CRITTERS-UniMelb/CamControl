@@ -2,14 +2,16 @@
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
+from sys import platform
 
-#import pythoncom
+if platform == "win32":
+  import pythoncom
 import uvcham
 
 # Import local scripts
 
 
-class CameraThread(QThread):
+class CameraThread_uvc(QThread):
 
     cameraImage = pyqtSignal(object)
     cameraNameSignal = pyqtSignal(object)
