@@ -2,7 +2,6 @@
 import os
 import time
 from datetime import datetime
-from sys import platform
 
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
@@ -11,8 +10,8 @@ from PyQt6.QtWidgets import *
 # Import local scripts
 import stylesheets
 from thread_camera_native import CameraThread_native
-from thread_camera_uvc import CameraThread_uvc
 from thread_camera_tucam import CameraThread_tucam
+from thread_camera_uvc import CameraThread_uvc
 from thread_cameraTimer import CameraTimer
 from thread_videoRecorder import VideoRecorder
 
