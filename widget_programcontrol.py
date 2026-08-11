@@ -218,27 +218,6 @@ class ProgramControlWidget(QGroupBox):
         self.programWidget_RunButton.clicked.connect(self.runProgram)
         self.programWidget_OperatingButtonsLayout.addWidget(self.programWidget_RunButton)
 
-        # Pause Button
-        self.programWidget_PauseButton = QPushButton("Pause")
-        self.programWidget_PauseButton.setFont(self.buttonFont)
-        self.programWidget_PauseButton.setEnabled(False)
-        self.programWidget_PauseButton.setFixedHeight(100)
-        self.programWidget_PauseButton.setFixedWidth(100)
-        self.programWidget_PauseButton.setStyleSheet(stylesheets.getQPushButtonStyle1(50))
-        self.programWidget_PauseButton.setGraphicsEffect(stylesheets.getQPushButtonStyle1_shadow())
-        self.programWidget_PauseButton.clicked.connect(self.pauseProgram)
-        self.programWidget_OperatingButtonsLayout.addWidget(self.programWidget_PauseButton)
-
-        # Stop Button
-        self.programWidget_StopButton = QPushButton("Stop")
-        self.programWidget_StopButton.setFont(self.buttonFont)
-        self.programWidget_StopButton.setEnabled(False)
-        self.programWidget_StopButton.setFixedHeight(100)
-        self.programWidget_StopButton.setFixedWidth(100)
-        self.programWidget_StopButton.setStyleSheet(stylesheets.getQPushButtonStyle1(50))
-        self.programWidget_StopButton.setGraphicsEffect(stylesheets.getQPushButtonStyle1_shadow())
-        self.programWidget_StopButton.clicked.connect(self.stopProgram)
-        self.programWidget_OperatingButtonsLayout.addWidget(self.programWidget_StopButton)
 
     # Function to update gantry status
     def updateUseGantry(self):
@@ -352,14 +331,6 @@ class ProgramControlWidget(QGroupBox):
         self.programThread.programGantrySignal.connect(self.sendProgramGantrySignal)
         self.programThread.programCameraSignal.connect(self.sendProgramCameraSignal)
         self.programThread.start()
-
-    # Function to pause program
-    def pauseProgram(self):
-        pass
-
-    # Function to stop program
-    def stopProgram(self):
-        pass
 
     # Function to update gantry status
     def updateGantryConnectionStatus(self, signal):
