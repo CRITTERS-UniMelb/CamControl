@@ -181,13 +181,7 @@ class CameraControlWidget(QGroupBox):
         # Add to parameters layout
         self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_VideoEncoding, 5, 1, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
 
-        # Auto-exposure checkbox
-        self.cameraWidget_AutoExpo = QCheckBox("Auto Exposure")
-        self.cameraWidget_AutoExpo.setChecked(True)
-        # Connect to function for updating autoexposure
-        self.cameraWidget_AutoExpo.stateChanged.connect(self.changeAutoExpo)
-        # Add to parameters layout
-        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_AutoExpo, 6, 0, 1, 2)
+
 
         # Exposure Time
         # Create exposure time label and add to parameter layout
@@ -313,9 +307,7 @@ class CameraControlWidget(QGroupBox):
             self.cameraWidget_SnapButton.setEnabled(True)
             self.cameraWidget_RecordButton.setEnabled(True)
             time.sleep(0.1)
-            self.changeAutoExpo()
-            if self.cameraWidget_AutoExpo.isChecked() is False:
-                self.updateExposureTime()
+            self.updateExposureTime()
             self.cameraCurrentAction.emit("Live Streaming")
 
     # Define function for snapping picture
@@ -366,22 +358,6 @@ class CameraControlWidget(QGroupBox):
     def cameraVideoEncodingChanged(self):
         pass
 
-
-    # Define method for changing auto-exposure
-    def changeAutoExpo(self):
-        # If a camera is connected, set auto-exposure to on
-        if (self.cameraConnected == 1) and (self.cameraThread):
-            self.cameraThread.changeAutoExposure(self.cameraWidget_AutoExpo.isChecked())
-
-        # If autoexposure is not checked, enable exposure time
-        if self.cameraWidget_AutoExpo.isChecked() is False:
-            self.cameraWidget_ExposureTime.setEnabled(True)
-            self.cameraWidget_ExposureTimeSpin.setEnabled(True)
-        # If autoexposure is checked, disable exposure time
-        else:
-            self.cameraWidget_ExposureTime.setValue(33)
-            self.cameraWidget_ExposureTime.setEnabled(False)
-            self.cameraWidget_ExposureTimeSpin.setEnabled(False)
 
 
     # Define method for changing exposure time
@@ -487,11 +463,8 @@ class CameraControlWidget(QGroupBox):
     # Function for updating camera parameters as part of a program
     def programUpdateCameraParameters(self):
         # Updating the camera with exposure options
-        if (self.cameraConnected == 1):
-            if self.cameraThread:
-                self.cameraThread.changeAutoExposure(self.cameraWidget_AutoExpo.isChecked())
-            if (self.cameraWidget_AutoExpo.isChecked() is False) and (self.cameraThread):
-                self.cameraThread.changeExposureTime(int(self.cameraWidget_ExposureTime.value()))
+        if (self.cameraConnected == 1) and (self.cameraThread):
+            self.cameraThread.changeExposureTime(int(self.cameraWidget_ExposureTime.value()))
 
     # Begin recording video as part of a program
     def programInitVideoRecord(self, signal):

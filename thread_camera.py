@@ -30,7 +30,6 @@ class CameraThread(QThread):
         self.imageMinimizedWidth = 500
         self.imageMinimizedHeight = 500
 
-
     def run(self):
         self.connectCamera()
         while self.running:
