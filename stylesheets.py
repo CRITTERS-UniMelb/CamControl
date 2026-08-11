@@ -1,7 +1,7 @@
 # Import packages
-from PyQt6.QtCore import *
-from PyQt6.QtGui import *
-from PyQt6.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 
 # Import local scripts
 
@@ -46,9 +46,8 @@ class VLine(QFrame):
   
     # a simple Vertical line
     def __init__(self):
-        super().__init__()
-        self.setFrameShape(self.Shape.VLine)
-        self.setFrameShadow(self.Shadow.Sunken)
+        super(VLine, self).__init__()
+        self.setFrameShape(self.VLine|self.Sunken)
 
 
 # creating HLine class
@@ -56,6 +55,5 @@ class HLine(QFrame):
   
     # a simple Horizontal line
     def __init__(self):
-        super().__init__()
-        self.setFrameShape(self.Shape.HLine)
-        self.setFrameShadow(self.Shadow.Sunken)
+        super(HLine, self).__init__()
+        self.setFrameShape(self.HLine|self.Sunken)

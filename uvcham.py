@@ -3,8 +3,7 @@ Win32:
     (a) x86: XP SP3 or above; CPU supports SSE2 instruction set or above
     (b) x64: Win7 or above
 """
-import ctypes
-import os.path
+import sys, ctypes, os.path
 
 """
 ************************************************************************
@@ -157,7 +156,7 @@ class Uvcham:
         _fields_ = [('displayname', ctypes.c_wchar * 128), # display name
                     ('id', ctypes.c_wchar * 128)]          # unique and opaque id of a connected camera, for Uvcham_open
 
-    #__CALLBACK = ctypes.WINFUNCTYPE(None, ctypes.c_uint, ctypes.py_object)
+    __CALLBACK = ctypes.WINFUNCTYPE(None, ctypes.c_uint, ctypes.py_object)
     __lib = None
 
     @staticmethod
@@ -190,7 +189,7 @@ class Uvcham:
         a = (cls.__Device * UVCHAM_MAX)()
         n = cls.__lib.Uvcham_enum(a)
         arr = []
-        for i in range(n):
+        for i in range(0, n):
             arr.append(cls.__convertDevice(a[i]))
         return arr
 
