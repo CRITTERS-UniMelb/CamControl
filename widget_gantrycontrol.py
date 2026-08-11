@@ -47,7 +47,7 @@ class GantryControlWidget(QGroupBox):
 
         # Add the icon to the main layout first - puts it at the left.
         self.gantryIconLayout = QVBoxLayout()
-        self.gantryIconLayout.setAlignment(Qt.AlignVCenter)
+        self.gantryIconLayout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
         self.widgetGantryControlsLayout.addLayout(self.gantryIconLayout)
 
         # Add title and tnputs layout to the main layout
@@ -56,12 +56,12 @@ class GantryControlWidget(QGroupBox):
 
         # Add title layout within the title and inputs layout (at top)
         self.gantryTitleLayout = QVBoxLayout()
-        self.gantryTitleLayout.setAlignment(Qt.AlignTop)
+        self.gantryTitleLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.gantryTitleInputsLayout.addLayout(self.gantryTitleLayout, stretch=0)
 
         # Add inputs layout within the title and inputs layout (goes below title)
         self.gantryInputsLayout = QVBoxLayout()
-        self.gantryInputsLayout.setAlignment(Qt.AlignVCenter)
+        self.gantryInputsLayout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
         self.gantryTitleInputsLayout.addLayout(self.gantryInputsLayout, stretch=1)
 
         # Add a vertical line separator before the gantry buttons
@@ -69,7 +69,7 @@ class GantryControlWidget(QGroupBox):
 
         # Add gantry buttons to the main layout - puts it at right size
         self.gantryButtonsLayout = QHBoxLayout()
-        self.gantryButtonsLayout.setAlignment(Qt.AlignVCenter)
+        self.gantryButtonsLayout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
         self.widgetGantryControlsLayout.addLayout(self.gantryButtonsLayout)
 
     # Method for setting application fonts
@@ -94,7 +94,7 @@ class GantryControlWidget(QGroupBox):
         # Set font to futura heavy
         self.gantryWidget_Title.setFont(QFont(self.futuraheavyfont_str, 16))
         # Place title into title layout 
-        self.gantryTitleLayout.addWidget(self.gantryWidget_Title, alignment=Qt.AlignHCenter)
+        self.gantryTitleLayout.addWidget(self.gantryWidget_Title, alignment=Qt.AlignmentFlag.AlignHCenter)
 
     # Method to define the input fields for the gantry
     def makeInputs(self):
@@ -104,11 +104,11 @@ class GantryControlWidget(QGroupBox):
         self.gantryInputsLayout.addLayout(self.gantryWidget_GantryIPSettingsLayout)
         # Create label, set size, and add to IP input box
         self.gantryWidget_GantryIPaddressLabel = QLabel("Gantry IP address:")
-        self.gantryWidget_GantryIPaddressLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.gantryWidget_GantryIPaddressLabel.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.gantryWidget_GantryIPSettingsLayout.addWidget(self.gantryWidget_GantryIPaddressLabel)
         # Add input field as editable line
         self.gantryWidget_GantryIPaddress = QLineEdit()
-        self.gantryWidget_GantryIPaddress.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.gantryWidget_GantryIPaddress.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         # Set default IP
         self.gantryWidget_GantryIPaddress.setText("192.168.3.11")
         # Add field to IP layout
@@ -120,11 +120,11 @@ class GantryControlWidget(QGroupBox):
         self.gantryInputsLayout.addLayout(self.gantryWidget_GantryPortSettingsLayout)
         # Create label, set size, and add to port input box
         self.gantryWidget_GantryPortLabel = QLabel("Gantry Port:")
-        self.gantryWidget_GantryPortLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.gantryWidget_GantryPortLabel.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.gantryWidget_GantryPortSettingsLayout.addWidget(self.gantryWidget_GantryPortLabel)
         # Add input field as editable line
         self.gantryWidget_GantryPort = QLineEdit()
-        self.gantryWidget_GantryPort.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.gantryWidget_GantryPort.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         # Set default port
         self.gantryWidget_GantryPort.setText("3920")
         # Add field to port layout
@@ -136,12 +136,12 @@ class GantryControlWidget(QGroupBox):
         self.gantryInputsLayout.addLayout(self.gantryWidget_GantryXCoordLayout)
         # Create label, set size, and add to xcoord input box
         self.gantryWidget_XCoordLabel = QLabel("Specify Gantry X coordinate:")
-        self.gantryWidget_XCoordLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.gantryWidget_XCoordLabel.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.gantryWidget_GantryXCoordLayout.addWidget(self.gantryWidget_XCoordLabel)
         # Add xcoord input at an interable number field
         self.gantryWidget_XCoord = QDoubleSpinBox()
         self.gantryWidget_XCoord.setEnabled(False)
-        self.gantryWidget_XCoord.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.gantryWidget_XCoord.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         # Set limits on xcoord inputs
         self.gantryWidget_XCoord.setRange(0, 200)
         self.gantryWidget_XCoord.setSingleStep(10)
@@ -157,12 +157,12 @@ class GantryControlWidget(QGroupBox):
         self.gantryInputsLayout.addLayout(self.gantryWidget_GantryYCoordLayout)
         # Create label, set size, and add to xcoord input box
         self.gantryWidget_YCoordLabel = QLabel("Specify Gantry Y coordinate:")
-        self.gantryWidget_YCoordLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.gantryWidget_YCoordLabel.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.gantryWidget_GantryYCoordLayout.addWidget(self.gantryWidget_YCoordLabel)
         # Add xcoord input at an interable number field
         self.gantryWidget_YCoord = QDoubleSpinBox()
         self.gantryWidget_YCoord.setEnabled(False)
-        self.gantryWidget_YCoord.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.gantryWidget_YCoord.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         # Set limits on xcoord inputs
         self.gantryWidget_YCoord.setRange(0, 200)
         self.gantryWidget_YCoord.setSingleStep(10)

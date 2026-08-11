@@ -63,7 +63,7 @@ class CameraThread(QThread):
         image = QImage(image,
                        image.shape[1],
                        image.shape[0],
-                       QImage.Format_RGB888)
+                       QImage.Format.Format_RGB888)
         return image
 
     def changeAutoExposure(self, state):

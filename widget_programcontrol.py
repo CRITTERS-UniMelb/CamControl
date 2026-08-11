@@ -51,7 +51,7 @@ class ProgramControlWidget(QGroupBox):
 
         # Icon Layout
         self.programWidget_IconLayout = QVBoxLayout()
-        self.programWidget_IconLayout.setAlignment(Qt.AlignVCenter)
+        self.programWidget_IconLayout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
         self.programWidget_Layout.addLayout(self.programWidget_IconLayout)
 
         # Title and Device Selector Layout
@@ -60,12 +60,12 @@ class ProgramControlWidget(QGroupBox):
 
         # Title Layout
         self.programWidget_TitleLayout = QVBoxLayout()
-        self.programWidget_TitleLayout.setAlignment(Qt.AlignTop)
+        self.programWidget_TitleLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.programWidget_TitleDeviceSelectorLayout.addLayout(self.programWidget_TitleLayout, stretch=0)
 
         # Device Selector Layout
         self.programWidget_DeviceSelectorLayout = QVBoxLayout()
-        self.programWidget_DeviceSelectorLayout.setAlignment(Qt.AlignVCenter)
+        self.programWidget_DeviceSelectorLayout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
         self.programWidget_TitleDeviceSelectorLayout.addLayout(self.programWidget_DeviceSelectorLayout, stretch=1)
 
         # Vertical line separator 
@@ -73,7 +73,7 @@ class ProgramControlWidget(QGroupBox):
 
         # Device Parameters Layout
         self.programWidget_DeviceParametersLayout = QVBoxLayout()
-        self.programWidget_DeviceParametersLayout.setAlignment(Qt.AlignVCenter)
+        self.programWidget_DeviceParametersLayout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
         self.programWidget_Layout.addLayout(self.programWidget_DeviceParametersLayout, stretch=2)
 
         # Vertical line separator 
@@ -81,7 +81,7 @@ class ProgramControlWidget(QGroupBox):
 
         # Loading Buttons Layout
         self.programWidget_LoadingButtonsLayout = QHBoxLayout()
-        self.programWidget_LoadingButtonsLayout.setAlignment(Qt.AlignVCenter)
+        self.programWidget_LoadingButtonsLayout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
         self.programWidget_Layout.addLayout(self.programWidget_LoadingButtonsLayout)
 
         # Vertical line separator 
@@ -89,7 +89,7 @@ class ProgramControlWidget(QGroupBox):
 
         # Operating Buttons Layout
         self.programWidget_OperatingButtonsLayout = QHBoxLayout()
-        self.programWidget_OperatingButtonsLayout.setAlignment(Qt.AlignVCenter)
+        self.programWidget_OperatingButtonsLayout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
         self.programWidget_Layout.addLayout(self.programWidget_OperatingButtonsLayout)
 
     # Function for GUI fonts
@@ -118,26 +118,26 @@ class ProgramControlWidget(QGroupBox):
     def makeTitle(self):
         # Title
         self.programWidget_Title = QLabel("Program")
-        self.programWidget_Title.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.programWidget_Title.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         self.programWidget_Title.setFont(QFont(self.futuraheavyfont_str, 16))
-        self.programWidget_TitleLayout.addWidget(self.programWidget_Title, alignment=Qt.AlignCenter)
+        self.programWidget_TitleLayout.addWidget(self.programWidget_Title, alignment=Qt.AlignmentFlag.AlignCenter)
 
     # Function for GUI input optionss
     def makeInputs(self):
         # Device selections
         self.programWidget_UseGantry = QCheckBox("Use Gantry")
-        self.programWidget_UseGantry.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.programWidget_UseGantry.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         self.programWidget_UseGantry.setChecked(True)
         # Connect to updateUseGantry function
         self.programWidget_UseGantry.stateChanged.connect(self.updateUseGantry)
-        self.programWidget_DeviceSelectorLayout.addWidget(self.programWidget_UseGantry, alignment=Qt.AlignCenter)
+        self.programWidget_DeviceSelectorLayout.addWidget(self.programWidget_UseGantry, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.programWidget_UseCamera = QCheckBox("Use Camera")
-        self.programWidget_UseCamera.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.programWidget_UseCamera.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         self.programWidget_UseCamera.setChecked(True)
         # Connect to updateUseCamera function
         self.programWidget_UseCamera.stateChanged.connect(self.updateUseCamera)
-        self.programWidget_DeviceSelectorLayout.addWidget(self.programWidget_UseCamera, alignment=Qt.AlignCenter)
+        self.programWidget_DeviceSelectorLayout.addWidget(self.programWidget_UseCamera, alignment=Qt.AlignmentFlag.AlignCenter)
 
         # Device Parameters
         ## Horizontal separator
@@ -155,11 +155,11 @@ class ProgramControlWidget(QGroupBox):
         self.programWidget_DeviceParametersLayout.addLayout(self.programWidget_VideoDurationLayout)
         self.programWidget_VideoDurationLabel = QLabel("Video Duration (sec):")
         self.programWidget_VideoDurationLabel.setEnabled(True)
-        self.programWidget_VideoDurationLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.programWidget_VideoDurationLabel.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.programWidget_VideoDurationLayout.addWidget(self.programWidget_VideoDurationLabel)
         self.programWidget_VideoDuration = QDoubleSpinBox()
         self.programWidget_VideoDuration.setEnabled(True)
-        self.programWidget_VideoDuration.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.programWidget_VideoDuration.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         self.programWidget_VideoDuration.setRange(1, 3600)
         self.programWidget_VideoDuration.setSingleStep(1)
         self.programWidget_VideoDuration.setDecimals(0)
@@ -171,12 +171,12 @@ class ProgramControlWidget(QGroupBox):
         self.programWidget_DeviceParametersLayout.addLayout(self.programWidget_VideoDirectoryLayout)
         self.programWidget_VideoDirectoryLabel = QLabel("Video Directory:")
         self.programWidget_VideoDirectoryLabel.setEnabled(True)
-        self.programWidget_VideoDirectoryLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.programWidget_VideoDirectoryLabel.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.programWidget_VideoDirectoryLayout.addWidget(self.programWidget_VideoDirectoryLabel)
         self.programWidget_VideoDirectoryButton = QPushButton("Change...")
         self.programWidget_VideoDirectoryButton.setEnabled(True)
         self.programWidget_VideoDirectoryButton.setToolTip(str(self.videoPath))
-        self.programWidget_VideoDirectoryButton.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.programWidget_VideoDirectoryButton.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         # Connect to selectProgramVideoDirectory
         self.programWidget_VideoDirectoryButton.clicked.connect(self.selectProgramVideoDirectory)
         self.programWidget_VideoDirectoryLayout.addWidget(self.programWidget_VideoDirectoryButton)

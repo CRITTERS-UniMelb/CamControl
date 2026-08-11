@@ -46,8 +46,9 @@ class VLine(QFrame):
   
     # a simple Vertical line
     def __init__(self):
-        super(VLine, self).__init__()
-        self.setFrameShape(self.VLine|self.Sunken)
+        super().__init__()
+        self.setFrameShape(self.Shape.VLine)
+        self.setFrameShadow(self.Shadow.Sunken)
 
 
 # creating HLine class
@@ -55,5 +56,6 @@ class HLine(QFrame):
   
     # a simple Horizontal line
     def __init__(self):
-        super(HLine, self).__init__()
-        self.setFrameShape(self.HLine|self.Sunken)
+        super().__init__()
+        self.setFrameShape(self.Shape.HLine)
+        self.setFrameShadow(self.Shadow.Sunken)
