@@ -24,6 +24,7 @@ class CameraControlWidget(QGroupBox):
     cameraConnectionStatus = pyqtSignal(object)
     cameraCurrentAction = pyqtSignal(object)
     cameraExposure = pyqtSignal(int)
+    driverChoice = pyqtSignal(int)
 
     # Set initiation commands
     def __init__(self):
@@ -105,39 +106,23 @@ class CameraControlWidget(QGroupBox):
         # Add to left column of parent inputs layout
         self.cameraWidgetLayout_LeftColumn.addLayout(self.cameraWidgetParametersLayout)
         
-        # Camera Selection
-        # Create camera selection label and set size, add to parameter layout
-        self.cameraWidget_CameraSelectionLabel = QLabel("Camera Selection:")
-        self.cameraWidget_CameraSelectionLabel.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_CameraSelectionLabel, 0, 0, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
-        # Create drop-down box for camera selection
-        self.cameraWidget_CameraSelection = QComboBox()
-        self.cameraWidget_CameraSelection.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-        # Define camera options
-        self.cameraWidget_CameraSelection.addItems(["CAM1 - XCAM4K8MPA - GXCAM HiChrome-HR4", "CAM2 - XCAM4K16MPA - GXCAM HiChrome-HR4 Hi Res", "CAM3 - XCAM4K16MPA - GXCAM HiChrome-HR4"])
-        # Set camera default to 2nd option
-        self.cameraWidget_CameraSelection.setCurrentIndex(1)
-        # Connect to function for changing camera
-        self.cameraWidget_CameraSelection.currentIndexChanged.connect(self.cameraSelectionChanged)
+        # Driver selection
+        # Create driver selection label and set size, add to parameter layout
+        self.cameraWidget_DriverSelectionLabel = QLabel("Driver Selection:")
+        self.cameraWidget_DriverSelectionLabel.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_DriverSelectionLabel, 0, 0, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
+        # Create drop-down box for driver selection
+        self.cameraWidget_DriverSelection = QComboBox()
+        self.cameraWidget_DriverSelection.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        # Define driver options
+        self.cameraWidget_DriverSelection.addItems(["Native OpenCV", "UVC", "Tucam"])
+        # Set camera default to 1st option
+        self.cameraWidget_DriverSelection.setCurrentIndex(0)
+        # Connect to function for changing driver
+        self.cameraWidget_DriverSelection.currentIndexChanged.connect(self.driverSelectionChanged)
         # Add to parameters layout
-        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_CameraSelection, 0, 1, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
+        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_DriverSelection, 0, 1, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
 
-        # Resolution Selection
-        # Create camera selection label and set size, add to parameter layout
-        self.cameraWidget_CameraResolutionLabel = QLabel("Camera Resolution:")
-        self.cameraWidget_CameraResolutionLabel.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_CameraResolutionLabel, 2, 0, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
-        # Create drop-down menu for resolution
-        self.cameraWidget_CameraResolution = QComboBox()
-        self.cameraWidget_CameraResolution.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-        # Define resolution options
-        self.cameraWidget_CameraResolution.addItems(["5440x3060"])
-        # Set default option
-        self.cameraWidget_CameraResolution.setCurrentIndex(0)
-        # Connect to function for changing resolution
-        self.cameraWidget_CameraResolution.currentIndexChanged.connect(self.cameraResolutionChanged)
-        # Add to parameters layout
-        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_CameraResolution, 2, 1, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
 
         # Video Directory
         # Create vid directory label and set size, add to parameter layout
@@ -177,8 +162,6 @@ class CameraControlWidget(QGroupBox):
         self.cameraWidget_VideoEncoding.addItems([".avi (MJPEG)", ".mp4 (H264)"])
         # Set default to AVI
         self.cameraWidget_VideoEncoding.setCurrentIndex(0)
-        # Connect to function to update video encoding
-        self.cameraWidget_VideoEncoding.currentIndexChanged.connect(self.cameraVideoEncodingChanged)
         # Add to parameters layout
         self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_VideoEncoding, 5, 1, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
 
@@ -336,29 +319,15 @@ class CameraControlWidget(QGroupBox):
             self.makeVideo((self.cameraFrames, self.videoRecording_TimeInit, self.videoRecording_TimeFinal))
             self.cameraCurrentAction.emit("Saving Video")
 
-    # Define function for changing camera
-    def cameraSelectionChanged(self):
-        if (self.cameraWidget_CameraSelection.currentText() == "CAM1 - XCAM4K8MPA - GXCAM HiChrome-HR4"):
-            self.cameraWidget_CameraResolution.clear()
-            self.cameraWidget_CameraResolution.addItems(["3840x2160"])
-            self.cameraWidget_CameraResolution.setCurrentIndex(0)
-        elif (self.cameraWidget_CameraSelection.currentText() == "CAM2 - XCAM4K16MPA - GXCAM HiChrome-HR4 Hi Res") or (self.cameraWidget_CameraSelection.currentText() == "CAM3 - XCAM4K16MPA - GXCAM HiChrome-HR4"):
-            self.cameraWidget_CameraResolution.clear()
-            self.cameraWidget_CameraResolution.addItems(["5440x3060"])
-            self.cameraWidget_CameraResolution.setCurrentIndex(0)
-        elif (self.cameraWidget_CameraSelection.currentText() == "Tucsen MIchrome 20"):
-            self.cameraWidget_CameraResolution.clear()
-            self.cameraWidget_CameraResolution.addItems(["5472x3648"])
-            self.cameraWidget_CameraResolution.setCurrentIndex(0)
 
-    # Empty methods for changing resolution and encoding
-    def cameraResolutionChanged(self):
-        pass
-
-    def cameraVideoEncodingChanged(self):
-        pass
-
-
+    # Define function for changing driver
+    def driverSelectionChanged(self):
+        if (self.cameraWidget_DriverSelection.currentText() == "Native OpenCV"):
+            self.driverChoice.emit(0)
+        elif (self.cameraWidget_DriverSelection.currentText() == "UVC"):
+            self.driverChoice.emit(1)
+        elif (self.cameraWidget_DriverSelection.currentText() == "Tucam"):
+            self.driverChoice.emit(2)
 
     # Define method for changing exposure time
     def updateExposureTime(self):
