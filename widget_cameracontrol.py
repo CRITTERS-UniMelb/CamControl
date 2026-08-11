@@ -458,11 +458,6 @@ class CameraControlWidget(QGroupBox):
         else:
             pass
     
-    # Function for updating camera parameters as part of a program
-    def programUpdateCameraParameters(self):
-        # Updating the camera with exposure options
-        if (self.cameraConnected == 1) and (self.cameraThread):
-            self.cameraThread.changeExposureTime(int(self.cameraWidget_ExposureTime.value()))
 
     # Begin recording video as part of a program
     def programInitVideoRecord(self, signal):
@@ -492,7 +487,7 @@ class CameraControlWidget(QGroupBox):
                 self.programVideoPath = str(signal[2])+".avi"
             programVideoPackage = [self.cameraFrames, 0, programVideoDuration]
             encodingMethod = self.cameraWidget_VideoEncoding.currentIndex()
-            # Start video reocrder thread
+            # Start video recorder thread
             self.programVideoRecorderThread = VideoRecorder(programVideoPackage, self.programVideoPath, encodingMethod)
             self.programVideoRecorderThread.currentAction.connect(self.programVideoSaved)
             self.programVideoRecorderThread.start()
