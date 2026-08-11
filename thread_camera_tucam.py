@@ -4,14 +4,13 @@ from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from sys import platform
 
-if platform == "win32":
-  import tucam
-
-
 # Import local scripts
+if platform == "win32":
+  import tucam_cmds
 
 
-class CameraThread_tucam(QThread):
+
+class CameraThread_uvc(QThread):
 
     cameraImage = pyqtSignal(object)
     cameraNameSignal = pyqtSignal(object)
@@ -19,13 +18,14 @@ class CameraThread_tucam(QThread):
     def __init__(self):
         super().__init__()
         self.cameraName = None
+        self.running = False
         self.hcam = None
         self.buf = None
         self.autoExposure = True
 
     def connectCamera(self):
         try:
-            a = uvcham.Uvcham.enum()
+            a = tucam_cmds.Tucam()
         except:
             print("ELLY:    Warning - Failed to find a camera")
             self.cameraName = None
@@ -37,33 +37,36 @@ class CameraThread_tucam(QThread):
                 self.cameraNameSignal.emit(self.cameraName)
             else:
                 try:
-                    hcam = uvcham.Uvcham.open(a[0].id)
+                    hcam = tucam_cmds.Tucam.OpenCamera(0) 
                 except uvcham.HRESULTException as ex:
                     print("ELLY:    Warning - Failed to open the camera, hr=0x{:x}".format(ex.hr))
                     self.cameraName = None
                     self.cameraNameSignal.emit(self.cameraName)
                 else:
-                    self.cameraName = a[0].displayname
+                    self.cameraName = a.hIdxTUCam
                     print("ELLY:    Found the camera {}".format(self.cameraName))
                     self.cameraNameSignal.emit(str(self.cameraName))
 
-
-    @staticmethod
-    def cameraCallback(nEvent, ctx):
-        ctx.CameraCallback(nEvent)
-
-
-    def CameraCallback(self, nEvent):
-        if nEvent == uvcham.UVCHAM_EVENT_IMAGE:
-            img = QImage(self.buf, self.width, self.height, (self.width * 24 + 31) // 32 * 4, QImage.Format_BGR888)
-            self.cameraImage.emit(img)
-        else:
-            pass
-            # print('event callback: {}'.format(nEvent))
-
+    def callback(self):
+        
 
     def run(self):
-        #pythoncom.CoInitialize()
+        a = tucam_cmds.Tucam()
+        a.OpenCamera(0)
+        while self.running is True:
+            m_callback = tucam_cmds.CallBack(a.TUCAMOPEN)
+            CALL_BACK_FUN = BUFFER_CALLBACK(m_callback.OnCallbackNewFrame)
+            CALL_BACK_USER = CONTEXT_CALLBACK(m_callback.__class__)
+            # 3. ch:注册回调函数将获取到新数据 | en:Register the callback function that will be called by tucam when new raw frame arrives
+            TUCAM_Buf_DataCallBack(a.TUCAMOPEN.hIdxTUCam, CALL_BACK_FUN, CALL_BACK_USER)
+            # 4.ch:开始采集 | en:Start capture
+            a.StartCapture()
+            # 6.ch:停止采集 | en:Stop capture
+            demo.StopCapture()
+            # 7.ch:关闭相机 | en:Close the camera
+            demo.CloseCamera()
+
+        pythoncom.CoInitialize()
         a = uvcham.Uvcham.enum()
         if len(a) > 0:
             print("ELLY:    Opening the camera {} (id = {})".format(a[0].displayname, a[0].id))
