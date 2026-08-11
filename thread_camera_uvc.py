@@ -6,7 +6,7 @@ from sys import platform
 
 if platform == "win32":
   import pythoncom
-import uvcham
+  import uvcham
 
 # Import local scripts
 
@@ -63,7 +63,7 @@ class CameraThread_uvc(QThread):
 
 
     def run(self):
-        #pythoncom.CoInitialize()
+        pythoncom.CoInitialize()
         a = uvcham.Uvcham.enum()
         if len(a) > 0:
             print("ELLY:    Opening the camera {} (id = {})".format(a[0].displayname, a[0].id))

@@ -1,11 +1,16 @@
 # Import packages
-import cv2
-import imutils
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
+from sys import platform
+
+if platform == "win32":
+  import tucam
+
 
 # Import local scripts
+
+
 class CameraThread_tucam(QThread):
 
     cameraImage = pyqtSignal(object)
@@ -16,49 +21,103 @@ class CameraThread_tucam(QThread):
         self.cameraName = None
         self.hcam = None
         self.buf = None
-        self.running = False
+        self.autoExposure = True
 
-    # Runs on startup to connect camera
     def connectCamera(self):
-        self.hcam = cv2.VideoCapture(0)
-        self.running = True
-        self.cameraName = 'Webcam'
-        self.cameraNameSignal.emit(self.cameraName)
-        self.width = 500
-        self.height = 500
-        self.imageMinimizedWidth = 500
-        self.imageMinimizedHeight = 500
+        try:
+            a = uvcham.Uvcham.enum()
+        except:
+            print("ELLY:    Warning - Failed to find a camera")
+            self.cameraName = None
+            self.cameraNameSignal.emit(self.cameraName)
+        else:
+            if len(a) <= 0:
+                print("ELLY:    Warning - Failed to find a camera")
+                self.cameraName = None
+                self.cameraNameSignal.emit(self.cameraName)
+            else:
+                try:
+                    hcam = uvcham.Uvcham.open(a[0].id)
+                except uvcham.HRESULTException as ex:
+                    print("ELLY:    Warning - Failed to open the camera, hr=0x{:x}".format(ex.hr))
+                    self.cameraName = None
+                    self.cameraNameSignal.emit(self.cameraName)
+                else:
+                    self.cameraName = a[0].displayname
+                    print("ELLY:    Found the camera {}".format(self.cameraName))
+                    self.cameraNameSignal.emit(str(self.cameraName))
 
-    # Starts running camera once start signal is received
-    @pyqtSlot()
+
+    @staticmethod
+    def cameraCallback(nEvent, ctx):
+        ctx.CameraCallback(nEvent)
+
+
+    def CameraCallback(self, nEvent):
+        if nEvent == uvcham.UVCHAM_EVENT_IMAGE:
+            img = QImage(self.buf, self.width, self.height, (self.width * 24 + 31) // 32 * 4, QImage.Format_BGR888)
+            self.cameraImage.emit(img)
+        else:
+            pass
+            # print('event callback: {}'.format(nEvent))
+
+
     def run(self):
-        self.connectCamera()
-        while self.running:
-            ret,frame = self.hcam.read()
-            if ret:
-                self.frame = frame.copy()
-                frame = self.cvimage_to_label(frame)
-                self.cameraImage.emit(frame)
-        self.hcam.release()
-        self.cameraNameSignal.emit(0)
-        print("ELLY:    Camera disconnected")
+        #pythoncom.CoInitialize()
+        a = uvcham.Uvcham.enum()
+        if len(a) > 0:
+            print("ELLY:    Opening the camera {} (id = {})".format(a[0].displayname, a[0].id))
+            self.hcam = uvcham.Uvcham.open(a[0].id)
+            if self.hcam:
+                try:
+                    res = self.hcam.get(uvcham.UVCHAM_RES)
+                    self.width = self.hcam.get(uvcham.UVCHAM_WIDTH | res)
+                    self.height = self.hcam.get(uvcham.UVCHAM_HEIGHT | res)
+                    bufsize = ((self.width * 24 + 31) // 32 * 4) * self.height
+                    print("ELLY:    Camera image size: {} x {}, bufsize = {}".format(self.width, self.height, bufsize))
+                    self.buf = bytes(bufsize)
+                    if self.buf:
+                        try:
+                            self.hcam.start(self.buf, self.cameraCallback, self)
+                        except uvcham.HRESULTException as ex:
+                            print("ELLY:    Warning - Failed to start the camera, hr=0x{:x}".format(ex.hr))
+                    input("")
+                    # input("ELLY:    press ENTER to exit")
+                finally:
+                    self.hcam.close()
+                    self.hcam = None
+                    self.buf = None
+            else:
+                print("ELLY:    Warning - Failed to open the camera")
+        else:
+            print("ELLY:    Warning - Failed to find the camera")
         
 
-    def cvimage_to_label(self,image):
-        image = imutils.resize(image,width = 640)
-        image = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
-        image = QImage(image,
-                       image.shape[1],
-                       image.shape[0],
-                       QImage.Format.Format_RGB888)
-        return image
+    def changeAutoExposure(self, state):
+        if self.hcam is not None:
+            if state is True:
+                self.hcam.put(uvcham.UVCHAM_AEXPO, 1)
+                print("ELLY:    Camera Auto Exposure Enabled")
+                self.autoExposure = True
+            elif state is False:
+                self.hcam.put(uvcham.UVCHAM_AEXPO, 0)
+                print("ELLY:    Camera Auto Exposure Disabled")
+                self.autoExposure = False
+    
+    def changeExposureTime(self, time):
+        if self.hcam is not None:
+            if self.autoExposure is False:
+                self.hcam.put(uvcham.UVCHAM_EXPOTIME, time)
 
-    # Receives signal 'CameraExposure' from widget_cameracontrol, does nothing but notes exposure time does not change.
-    @pyqtSlot(int)
-    def changeExposureTime(self, expTime):
-        print(f"Native camera does not require exposure time - changing to {expTime} has no effect.")
 
     def stop(self):
-        self.running = False
-        
+        try:
+            self.hcam
+        except:
+            pass
+        else:
+            self.hcam.close()
+            self.cameraName = None
+            self.cameraNameSignal.emit(0)
+            print("ELLY:    Camera disconnected")
             
