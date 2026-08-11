@@ -23,6 +23,7 @@ class CameraControlWidget(QGroupBox):
     cameraShowHideDisplay = pyqtSignal(int)
     cameraConnectionStatus = pyqtSignal(object)
     cameraCurrentAction = pyqtSignal(object)
+    cameraExposure = pyqtSignal(int)
 
     # Set initiation commands
     def __init__(self):
@@ -181,13 +182,7 @@ class CameraControlWidget(QGroupBox):
         # Add to parameters layout
         self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_VideoEncoding, 5, 1, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
 
-        # Auto-exposure checkbox
-        self.cameraWidget_AutoExpo = QCheckBox("Auto Exposure")
-        self.cameraWidget_AutoExpo.setChecked(True)
-        # Connect to function for updating autoexposure
-        self.cameraWidget_AutoExpo.stateChanged.connect(self.changeAutoExpo)
-        # Add to parameters layout
-        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_AutoExpo, 6, 0, 1, 2)
+
 
         # Exposure Time
         # Create exposure time label and add to parameter layout
@@ -200,7 +195,6 @@ class CameraControlWidget(QGroupBox):
         self.cameraWidgetParametersLayout.addLayout(self.cameraWidget_ExposureTimeSelectorLayout, 7, 1, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
         # Add slider for exposure time
         self.cameraWidget_ExposureTime = QSlider(Qt.Orientation.Horizontal)
-        self.cameraWidget_ExposureTime.setEnabled(False)
         self.cameraWidget_ExposureTime.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         # Set possible range from 0 to 200
         self.cameraWidget_ExposureTime.setRange(0, 200)
@@ -216,7 +210,6 @@ class CameraControlWidget(QGroupBox):
 
         # Add alternate entry box for exposure time
         self.cameraWidget_ExposureTimeSpin = QDoubleSpinBox()
-        self.cameraWidget_ExposureTimeSpin.setEnabled(False)
         self.cameraWidget_ExposureTimeSpin.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         # Set possible range and default
         self.cameraWidget_ExposureTimeSpin.setRange(0, 200)
@@ -278,6 +271,7 @@ class CameraControlWidget(QGroupBox):
             self.cameraThread = CameraThread()
             self.cameraThread.cameraNameSignal.connect(self.updateCameraConnection)
             self.cameraThread.cameraImage.connect(self.updateCameraDisplayImage)
+            self.cameraExposure.connect(self.cameraThread.changeExposureTime)
             # Starting the camera thread to start the live streaming
             self.cameraThread.start()
         # If already connected, disconnect when function is run
@@ -313,9 +307,7 @@ class CameraControlWidget(QGroupBox):
             self.cameraWidget_SnapButton.setEnabled(True)
             self.cameraWidget_RecordButton.setEnabled(True)
             time.sleep(0.1)
-            self.changeAutoExpo()
-            if self.cameraWidget_AutoExpo.isChecked() is False:
-                self.updateExposureTime()
+            self.updateExposureTime()
             self.cameraCurrentAction.emit("Live Streaming")
 
     # Define function for snapping picture
@@ -367,36 +359,18 @@ class CameraControlWidget(QGroupBox):
         pass
 
 
-    # Define method for changing auto-exposure
-    def changeAutoExpo(self):
-        # If a camera is connected, set auto-exposure to on
-        if (self.cameraConnected == 1) and (self.cameraThread):
-            self.cameraThread.changeAutoExposure(self.cameraWidget_AutoExpo.isChecked())
-
-        # If autoexposure is not checked, enable exposure time
-        if self.cameraWidget_AutoExpo.isChecked() is False:
-            self.cameraWidget_ExposureTime.setEnabled(True)
-            self.cameraWidget_ExposureTimeSpin.setEnabled(True)
-        # If autoexposure is checked, disable exposure time
-        else:
-            self.cameraWidget_ExposureTime.setValue(33)
-            self.cameraWidget_ExposureTime.setEnabled(False)
-            self.cameraWidget_ExposureTimeSpin.setEnabled(False)
-
 
     # Define method for changing exposure time
     def updateExposureTime(self):
-        if (self.cameraConnected == 1) and (self.cameraThread):
-            self.cameraThread.changeExposureTime(int(self.cameraWidget_ExposureTime.value()))
+        self.cameraExposure.emit(int(self.cameraWidget_ExposureTime.value()))
     
     # Define method for changing exposure time
     def updateExposureTimeLabel(self):
         self.cameraWidget_ExposureTimeSpin.setValue(int(self.cameraWidget_ExposureTime.value()))
-        self.updateExposureTime()
 
     # Update spin selector for exposure time
     def updateExposureTimeSpin(self):
-        self.cameraWidget_ExposureTime.setValue(self.cameraWidget_ExposureTimeSpin.value())
+        self.cameraWidget_ExposureTime.setValue(int(self.cameraWidget_ExposureTimeSpin.value()))
 
     #  Function to update video output directory
     def selectCameraOutputVideoDirectory(self):
@@ -484,14 +458,6 @@ class CameraControlWidget(QGroupBox):
         else:
             pass
     
-    # Function for updating camera parameters as part of a program
-    def programUpdateCameraParameters(self):
-        # Updating the camera with exposure options
-        if (self.cameraConnected == 1):
-            if self.cameraThread:
-                self.cameraThread.changeAutoExposure(self.cameraWidget_AutoExpo.isChecked())
-            if (self.cameraWidget_AutoExpo.isChecked() is False) and (self.cameraThread):
-                self.cameraThread.changeExposureTime(int(self.cameraWidget_ExposureTime.value()))
 
     # Begin recording video as part of a program
     def programInitVideoRecord(self, signal):
@@ -521,7 +487,7 @@ class CameraControlWidget(QGroupBox):
                 self.programVideoPath = str(signal[2])+".avi"
             programVideoPackage = [self.cameraFrames, 0, programVideoDuration]
             encodingMethod = self.cameraWidget_VideoEncoding.currentIndex()
-            # Start video reocrder thread
+            # Start video recorder thread
             self.programVideoRecorderThread = VideoRecorder(programVideoPackage, self.programVideoPath, encodingMethod)
             self.programVideoRecorderThread.currentAction.connect(self.programVideoSaved)
             self.programVideoRecorderThread.start()
