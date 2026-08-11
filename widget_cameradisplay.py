@@ -1,7 +1,7 @@
 # Import packages
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from PyQt6.QtGui import *
+from PyQt6.QtWidgets import *
+from PyQt6.QtCore import *
 import time
 
 # Import local scripts
@@ -44,7 +44,7 @@ class CameraDisplayWidget(QGroupBox):
 
     def makeButtons(self):
         self.cameraDisplayWidget_Fullscreen = QPushButton("Maximize Window")
-        self.cameraDisplayWidget_Fullscreen.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.cameraDisplayWidget_Fullscreen.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.cameraDisplayWidget_Fullscreen.clicked.connect(self.goFullScreen)
         self.cameraDisplay_ButtonsLayout.addWidget(self.cameraDisplayWidget_Fullscreen)
 
@@ -55,12 +55,12 @@ class CameraDisplayWidget(QGroupBox):
         # self.cameraWidget_CameraImageBG.setPixmap(QPixmap())
         # self.cameraWidget_CameraImageBG.setText("Camera Disconnected")
         # self.cameraWidget_CameraImageBG.setAlignment(Qt.AlignCenter)
-        # self.cameraWidget_CameraImageBG.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        # self.cameraWidget_CameraImageBG.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         # self.cameraDisplay_ImageDisplayLayout.addWidget(self.cameraWidget_CameraImageBG, 0, 0, 1, 1)
 
         self.cameraWidget_CameraImage = QLabel()
         self.cameraWidget_CameraImage.setPixmap(QPixmap())
-        self.cameraWidget_CameraImage.setAlignment(Qt.AlignCenter)
+        self.cameraWidget_CameraImage.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.cameraDisplay_ImageDisplayLayout.addWidget(self.cameraWidget_CameraImage, 0, 0, 1, 1)
     
 
@@ -69,9 +69,9 @@ class CameraDisplayWidget(QGroupBox):
         if (self.fullScreen == 0):
             if self.minimizedSizes is False:
                 self.calculateMinimizedGeometry()
-            imageScaled = image.scaled(self.imageMinimizedWidth, self.imageMinimizedHeight, Qt.KeepAspectRatio)
+            imageScaled = image.scaled(self.imageMinimizedWidth, self.imageMinimizedHeight, Qt.AspectRatioMode.KeepAspectRatio)
         elif (self.fullScreen == 1):
-            imageScaled = image.scaled(self.cameraWidget_CameraImage.width(), self.cameraWidget_CameraImage.height(), Qt.KeepAspectRatio)
+            imageScaled = image.scaled(self.cameraWidget_CameraImage.width(), self.cameraWidget_CameraImage.height(), Qt.AspectRatioMode.KeepAspectRatio)
         img = imageScaled.mirrored(False,True)
         self.cameraWidget_CameraImage.setPixmap(QPixmap.fromImage(img))
 

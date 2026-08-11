@@ -9,5 +9,5 @@ dependencies:
   - pandas
   - opencv
   - pyinstaller
-  - pyqt
+  - pyqt6
   - pyserial

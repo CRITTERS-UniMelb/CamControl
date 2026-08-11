@@ -3,9 +3,9 @@ import os
 import time
 from datetime import datetime
 
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt6.QtCore import *
+from PyQt6.QtGui import *
+from PyQt6.QtWidgets import *
 
 # Import local scripts
 import stylesheets
@@ -60,7 +60,7 @@ class CameraControlWidget(QGroupBox):
 
         # Add a left column to the main layout
         self.cameraWidgetLayout_LeftColumn = QVBoxLayout()
-        self.cameraWidgetLayout_LeftColumn.setAlignment(Qt.AlignTop)
+        self.cameraWidgetLayout_LeftColumn.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.cameraWidgetLayout.addLayout(self.cameraWidgetLayout_LeftColumn)
 
         # Add a vertical line separator between both columns
@@ -68,7 +68,7 @@ class CameraControlWidget(QGroupBox):
 
         # Add a right column to the main layout
         self.cameraWidgetLayout_RightColumn = QVBoxLayout()
-        self.cameraWidgetLayout_RightColumn.setAlignment(Qt.AlignTop)
+        self.cameraWidgetLayout_RightColumn.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.cameraWidgetLayout.addLayout(self.cameraWidgetLayout_RightColumn)
 
     # Method for setting application fonts
@@ -96,22 +96,22 @@ class CameraControlWidget(QGroupBox):
         # Create title box and add to left column of parent inputs layout
         self.cameraWidget_Title = QLabel("Camera")
         self.cameraWidget_Title.setFont(QFont(self.futuraheavyfont_str, 16))
-        self.cameraWidgetLayout_LeftColumn.addWidget(self.cameraWidget_Title, alignment=Qt.AlignCenter)
+        self.cameraWidgetLayout_LeftColumn.addWidget(self.cameraWidget_Title, alignment=Qt.AlignmentFlag.AlignCenter)
 
         # Create box for parameters
         self.cameraWidgetParametersLayout = QGridLayout()
-        self.cameraWidgetParametersLayout.setAlignment(Qt.AlignTop)
+        self.cameraWidgetParametersLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
         # Add to left column of parent inputs layout
         self.cameraWidgetLayout_LeftColumn.addLayout(self.cameraWidgetParametersLayout)
         
         # Camera Selection
         # Create camera selection label and set size, add to parameter layout
         self.cameraWidget_CameraSelectionLabel = QLabel("Camera Selection:")
-        self.cameraWidget_CameraSelectionLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_CameraSelectionLabel, 0, 0, 1, 1, alignment=Qt.AlignTop)
+        self.cameraWidget_CameraSelectionLabel.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_CameraSelectionLabel, 0, 0, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
         # Create drop-down box for camera selection
         self.cameraWidget_CameraSelection = QComboBox()
-        self.cameraWidget_CameraSelection.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.cameraWidget_CameraSelection.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         # Define camera options
         self.cameraWidget_CameraSelection.addItems(["CAM1 - XCAM4K8MPA - GXCAM HiChrome-HR4", "CAM2 - XCAM4K16MPA - GXCAM HiChrome-HR4 Hi Res", "CAM3 - XCAM4K16MPA - GXCAM HiChrome-HR4"])
         # Set camera default to 2nd option
@@ -119,16 +119,16 @@ class CameraControlWidget(QGroupBox):
         # Connect to function for changing camera
         self.cameraWidget_CameraSelection.currentIndexChanged.connect(self.cameraSelectionChanged)
         # Add to parameters layout
-        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_CameraSelection, 0, 1, 1, 1, alignment=Qt.AlignTop)
+        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_CameraSelection, 0, 1, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
 
         # Resolution Selection
         # Create camera selection label and set size, add to parameter layout
         self.cameraWidget_CameraResolutionLabel = QLabel("Camera Resolution:")
-        self.cameraWidget_CameraResolutionLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_CameraResolutionLabel, 2, 0, 1, 1, alignment=Qt.AlignTop)
+        self.cameraWidget_CameraResolutionLabel.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_CameraResolutionLabel, 2, 0, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
         # Create drop-down menu for resolution
         self.cameraWidget_CameraResolution = QComboBox()
-        self.cameraWidget_CameraResolution.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.cameraWidget_CameraResolution.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         # Define resolution options
         self.cameraWidget_CameraResolution.addItems(["5440x3060"])
         # Set default option
@@ -136,50 +136,50 @@ class CameraControlWidget(QGroupBox):
         # Connect to function for changing resolution
         self.cameraWidget_CameraResolution.currentIndexChanged.connect(self.cameraResolutionChanged)
         # Add to parameters layout
-        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_CameraResolution, 2, 1, 1, 1, alignment=Qt.AlignTop)
+        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_CameraResolution, 2, 1, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
 
         # Video Directory
         # Create vid directory label and set size, add to parameter layout
         self.cameraWidget_VideoDirectoryLabel = QLabel("Video Directory:")
-        self.cameraWidget_VideoDirectoryLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_VideoDirectoryLabel, 3, 0, 1, 1, alignment=Qt.AlignTop)
+        self.cameraWidget_VideoDirectoryLabel.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_VideoDirectoryLabel, 3, 0, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
         # Add push-button for choosing directory
         self.cameraWidget_VideoDirectoryButton = QPushButton("Change...")
         self.cameraWidget_VideoDirectoryButton.setToolTip(str(self.videoPath))
-        self.cameraWidget_VideoDirectoryButton.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.cameraWidget_VideoDirectoryButton.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         # Connect push-button to output selector function
         self.cameraWidget_VideoDirectoryButton.clicked.connect(self.selectCameraOutputVideoDirectory)
         # Add to parameters layout
-        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_VideoDirectoryButton, 3, 1, 1, 1, alignment=Qt.AlignTop)
+        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_VideoDirectoryButton, 3, 1, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
 
         # Video Name
         # Create vid name label and set size, add to parameter layout
         self.cameraWidget_VideoNameLabel = QLabel("Video Name:")
-        self.cameraWidget_VideoNameLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_VideoNameLabel, 4, 0, 1, 1, alignment=Qt.AlignTop)
+        self.cameraWidget_VideoNameLabel.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_VideoNameLabel, 4, 0, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
         # Create editable line input
         self.cameraWidget_VideoNameEntry = QLineEdit()
         # Set default to current date and video number
         self.cameraWidget_VideoNameEntry.setText(str(datetime.now().astimezone().strftime("%Y-%m-%d")+"_"+f"Video{self.savedVideoNumber}"))
-        self.cameraWidget_VideoNameEntry.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.cameraWidget_VideoNameEntry.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         # Add to parameters layout
-        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_VideoNameEntry, 4, 1, 1, 1, alignment=Qt.AlignTop)
+        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_VideoNameEntry, 4, 1, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
 
         # Video Encoding
         # Create video encoding label, set size, and add to parameter layout
         self.cameraWidget_VideoEncodingLabel = QLabel("Video Encoding:")
-        self.cameraWidget_VideoEncodingLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_VideoEncodingLabel, 5, 0, 1, 1, alignment=Qt.AlignTop)
+        self.cameraWidget_VideoEncodingLabel.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_VideoEncodingLabel, 5, 0, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
         # Create drop-down menu
         self.cameraWidget_VideoEncoding = QComboBox()
-        self.cameraWidget_VideoEncoding.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.cameraWidget_VideoEncoding.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         self.cameraWidget_VideoEncoding.addItems([".avi (MJPEG)", ".mp4 (H264)"])
         # Set default to AVI
         self.cameraWidget_VideoEncoding.setCurrentIndex(0)
         # Connect to function to update video encoding
         self.cameraWidget_VideoEncoding.currentIndexChanged.connect(self.cameraVideoEncodingChanged)
         # Add to parameters layout
-        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_VideoEncoding, 5, 1, 1, 1, alignment=Qt.AlignTop)
+        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_VideoEncoding, 5, 1, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
 
         # Auto-exposure checkbox
         self.cameraWidget_AutoExpo = QCheckBox("Auto Exposure")
@@ -193,18 +193,18 @@ class CameraControlWidget(QGroupBox):
         # Create exposure time label and add to parameter layout
         self.cameraWidget_ExposureTimeLabel = QLabel()
         self.cameraWidget_ExposureTimeLabel.setText("Exposure Time (ms)")
-        self.cameraWidget_ExposureTimeLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_ExposureTimeLabel, 7, 0, 1, 1, alignment=Qt.AlignTop)
+        self.cameraWidget_ExposureTimeLabel.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.cameraWidgetParametersLayout.addWidget(self.cameraWidget_ExposureTimeLabel, 7, 0, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
         # Add exposure time box
         self.cameraWidget_ExposureTimeSelectorLayout = QHBoxLayout()
-        self.cameraWidgetParametersLayout.addLayout(self.cameraWidget_ExposureTimeSelectorLayout, 7, 1, 1, 1, alignment=Qt.AlignTop)
+        self.cameraWidgetParametersLayout.addLayout(self.cameraWidget_ExposureTimeSelectorLayout, 7, 1, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
         # Add slider for exposure time
-        self.cameraWidget_ExposureTime = QSlider(Qt.Horizontal)
+        self.cameraWidget_ExposureTime = QSlider(Qt.Orientation.Horizontal)
         self.cameraWidget_ExposureTime.setEnabled(False)
-        self.cameraWidget_ExposureTime.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.cameraWidget_ExposureTime.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         # Set possible range from 0 to 200
         self.cameraWidget_ExposureTime.setRange(0, 200)
-        self.cameraWidget_ExposureTime.setFocusPolicy(Qt.NoFocus)
+        self.cameraWidget_ExposureTime.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.cameraWidget_ExposureTime.setPageStep(1)
         # Set initial value to 33
         self.cameraWidget_ExposureTime.setValue(33)
@@ -217,7 +217,7 @@ class CameraControlWidget(QGroupBox):
         # Add alternate entry box for exposure time
         self.cameraWidget_ExposureTimeSpin = QDoubleSpinBox()
         self.cameraWidget_ExposureTimeSpin.setEnabled(False)
-        self.cameraWidget_ExposureTimeSpin.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.cameraWidget_ExposureTimeSpin.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         # Set possible range and default
         self.cameraWidget_ExposureTimeSpin.setRange(0, 200)
         self.cameraWidget_ExposureTimeSpin.setSingleStep(1)

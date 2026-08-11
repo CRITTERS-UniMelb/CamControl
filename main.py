@@ -8,9 +8,9 @@
 import os
 import sys
 
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt6.QtCore import *
+from PyQt6.QtGui import *
+from PyQt6.QtWidgets import *
 
 # Import the main GUI component
 from widget_main import CentralWidget
@@ -57,7 +57,7 @@ def main():
     rect = screen.availableGeometry()
     window = MyMainWindow()
     window.showMaximized()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 
 
 if __name__ == '__main__':
