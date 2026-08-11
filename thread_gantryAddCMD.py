@@ -1,12 +1,12 @@
 # Import packages
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
 import queue
 import time
 
+from PyQt6.QtCore import *
+from PyQt6.QtGui import *
+from PyQt6.QtWidgets import *
+
 # Import local scripts
-import gantry_commands
 
 # Thread Class
 class GantryAddCMD(QThread):
@@ -14,7 +14,7 @@ class GantryAddCMD(QThread):
     gantryAction = pyqtSignal(object)
 
     def __init__(self, gantryCom):
-        super(GantryAddCMD, self).__init__()
+        super().__init__()
         # Gantry Com Thread
         self.gantryCom = gantryCom
 

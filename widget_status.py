@@ -1,12 +1,13 @@
 # Import packages
-from ctypes import alignment
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
 import os
+
+from PyQt6.QtCore import *
+from PyQt6.QtGui import *
+from PyQt6.QtWidgets import *
 
 # Import local scripts
 import stylesheets
+
 
 class StatusWidget(QGroupBox):
     def __init__(self):
@@ -32,7 +33,7 @@ class StatusWidget(QGroupBox):
 
         # Icon Layout (left column)
         self.statusWidget_IconLayout = QVBoxLayout()
-        self.statusWidget_IconLayout.setAlignment(Qt.AlignVCenter)
+        self.statusWidget_IconLayout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
         self.statusWidget_MainLayout.addLayout(self.statusWidget_IconLayout, stretch=0)
 
         # Information layout (right column)
@@ -41,17 +42,17 @@ class StatusWidget(QGroupBox):
 
         # Title Layout
         self.statusWidgetTitleRow = QVBoxLayout()
-        self.statusWidgetTitleRow.setAlignment(Qt.AlignTop|Qt.AlignCenter)
+        self.statusWidgetTitleRow.setAlignment(Qt.AlignmentFlag.AlignTop|Qt.AlignmentFlag.AlignCenter)
         self.statusWidget_InformationLayout.addLayout(self.statusWidgetTitleRow, stretch=0)
 
         # Connection Status Overall Layout
         self.statusWidgetStatusRow = QHBoxLayout()
-        self.statusWidgetStatusRow.setAlignment(Qt.AlignVCenter)
+        self.statusWidgetStatusRow.setAlignment(Qt.AlignmentFlag.AlignVCenter)
         self.statusWidget_InformationLayout.addLayout(self.statusWidgetStatusRow, stretch=1)
 
         # Connection Status Left Column Layout
         self.statusWidgetLayout_LeftColumn = QVBoxLayout()
-        self.statusWidgetLayout_LeftColumn.setAlignment(Qt.AlignCenter)
+        self.statusWidgetLayout_LeftColumn.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.statusWidgetStatusRow.addLayout(self.statusWidgetLayout_LeftColumn)
 
         # Gantry Connection Status Layout
@@ -71,7 +72,7 @@ class StatusWidget(QGroupBox):
 
         # Connection Status Right Column Layout
         self.statusWidgetLayout_RightColumn = QVBoxLayout()
-        self.statusWidgetLayout_RightColumn.setAlignment(Qt.AlignCenter)
+        self.statusWidgetLayout_RightColumn.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.statusWidgetStatusRow.addLayout(self.statusWidgetLayout_RightColumn)
 
         # Camera Connection Status Layout
@@ -84,11 +85,6 @@ class StatusWidget(QGroupBox):
 
         # Horizontal separator in right column
         self.statusWidgetLayout_RightColumn.addWidget(stylesheets.HLine())
-
-        # Arduino-Light Connection Status Layout
-        self.statusWidget_ArduinoLightConnectionStatusLayout = QHBoxLayout()
-        self.statusWidgetLayout_RightColumn.addLayout(self.statusWidget_ArduinoLightConnectionStatusLayout)
-
 
     def makeFonts(self):
         futuraheavyfont = QFontDatabase.addApplicationFont(os.path.join(os.path.dirname(__file__), 'font/Futura/Futura Heavy font.ttf'))
@@ -105,68 +101,58 @@ class StatusWidget(QGroupBox):
         # Title
         self.statusWidget_Title = QLabel("Information")
         self.statusWidget_Title.setFont(QFont(self.futuraheavyfont_str, 16))
-        self.statusWidgetTitleRow.addWidget(self.statusWidget_Title, alignment=Qt.AlignTop|Qt.AlignCenter)
+        self.statusWidgetTitleRow.addWidget(self.statusWidget_Title, alignment=Qt.AlignmentFlag.AlignTop|Qt.AlignmentFlag.AlignCenter)
 
     def makeConnectionLabels(self):
         # Gantry Connection Status
         self.statusWidget_GantryConnectionStatusLabel = QLabel("Gantry connection status:")
-        self.statusWidget_GantryConnectionStatusLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        self.statusWidget_GantryConnectionStatusLayout.addWidget(self.statusWidget_GantryConnectionStatusLabel, alignment=Qt.AlignCenter)
+        self.statusWidget_GantryConnectionStatusLabel.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.statusWidget_GantryConnectionStatusLayout.addWidget(self.statusWidget_GantryConnectionStatusLabel, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.statusWidget_GantryConnectionStatus = QLabel("Disconnected")
         self.statusWidget_GantryConnectionStatus.setStyleSheet("color: red;")
-        self.statusWidget_GantryConnectionStatus.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
-        self.statusWidget_GantryConnectionStatusLayout.addWidget(self.statusWidget_GantryConnectionStatus, alignment=Qt.AlignCenter)
+        self.statusWidget_GantryConnectionStatus.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.statusWidget_GantryConnectionStatusLayout.addWidget(self.statusWidget_GantryConnectionStatus, alignment=Qt.AlignmentFlag.AlignCenter)
 
         # Gantry Current Action
         self.statusWidget_GantryActionStatusLabel = QLabel("Gantry current action:")
-        self.statusWidget_GantryActionStatusLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        self.statusWidget_GantryActionStatusLayout.addWidget(self.statusWidget_GantryActionStatusLabel, alignment=Qt.AlignCenter)
+        self.statusWidget_GantryActionStatusLabel.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.statusWidget_GantryActionStatusLayout.addWidget(self.statusWidget_GantryActionStatusLabel, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.statusWidget_GantryActionStatus = QLabel("Disconnected")
         self.statusWidget_GantryActionStatus.setStyleSheet("color: red;")
-        self.statusWidget_GantryActionStatus.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
-        self.statusWidget_GantryActionStatusLayout.addWidget(self.statusWidget_GantryActionStatus, alignment=Qt.AlignCenter)
+        self.statusWidget_GantryActionStatus.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.statusWidget_GantryActionStatusLayout.addWidget(self.statusWidget_GantryActionStatus, alignment=Qt.AlignmentFlag.AlignCenter)
 
         # Gantry Current Location
         self.statusWidget_GantryCoordsLabel = QLabel("Gantry current coordinates:")
-        self.statusWidget_GantryCoordsLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        self.statusWidget_GantryCoordsLayout.addWidget(self.statusWidget_GantryCoordsLabel, alignment=Qt.AlignCenter)
+        self.statusWidget_GantryCoordsLabel.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.statusWidget_GantryCoordsLayout.addWidget(self.statusWidget_GantryCoordsLabel, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.statusWidget_GantryCoords = QLabel("NA")
         self.statusWidget_GantryCoords.setStyleSheet("color: red;")
-        self.statusWidget_GantryCoords.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
-        self.statusWidget_GantryCoordsLayout.addWidget(self.statusWidget_GantryCoords, alignment=Qt.AlignCenter)
+        self.statusWidget_GantryCoords.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.statusWidget_GantryCoordsLayout.addWidget(self.statusWidget_GantryCoords, alignment=Qt.AlignmentFlag.AlignCenter)
 
         # Camera Connection Status
         self.statusWidget_CameraConnectionStatusLabel = QLabel("Camera connection status:")
-        self.statusWidget_CameraConnectionStatusLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        self.statusWidget_CameraConnectionStatusLayout.addWidget(self.statusWidget_CameraConnectionStatusLabel, alignment=Qt.AlignCenter)
+        self.statusWidget_CameraConnectionStatusLabel.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.statusWidget_CameraConnectionStatusLayout.addWidget(self.statusWidget_CameraConnectionStatusLabel, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.statusWidget_CameraConnectionStatus = QLabel("Disconnected")
         self.statusWidget_CameraConnectionStatus.setStyleSheet("color: red;")
-        self.statusWidget_CameraConnectionStatus.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
-        self.statusWidget_CameraConnectionStatusLayout.addWidget(self.statusWidget_CameraConnectionStatus, alignment=Qt.AlignCenter)
+        self.statusWidget_CameraConnectionStatus.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.statusWidget_CameraConnectionStatusLayout.addWidget(self.statusWidget_CameraConnectionStatus, alignment=Qt.AlignmentFlag.AlignCenter)
 
         # Camera Action Status
         self.statusWidget_cameraActionStatusLabel = QLabel("Camera current action:")
-        self.statusWidget_cameraActionStatusLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        self.statusWidget_cameraActionStatusLayout.addWidget(self.statusWidget_cameraActionStatusLabel, alignment=Qt.AlignCenter)
+        self.statusWidget_cameraActionStatusLabel.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.statusWidget_cameraActionStatusLayout.addWidget(self.statusWidget_cameraActionStatusLabel, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.statusWidget_cameraActionStatus = QLabel("Disconnected")
         self.statusWidget_cameraActionStatus.setStyleSheet("color: red;")
-        self.statusWidget_cameraActionStatus.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
-        self.statusWidget_cameraActionStatusLayout.addWidget(self.statusWidget_cameraActionStatus, alignment=Qt.AlignCenter)
-
-        # Arduino-Light Connection Status
-        self.statusWidget_ArduinoLightConnectionStatusLabel = QLabel("Ring Light connection status:")
-        self.statusWidget_ArduinoLightConnectionStatusLabel.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        self.statusWidget_ArduinoLightConnectionStatusLayout.addWidget(self.statusWidget_ArduinoLightConnectionStatusLabel, alignment=Qt.AlignCenter)
-
-        self.statusWidget_ArduinoLightConnectionStatus = QLabel("Disconnected")
-        self.statusWidget_ArduinoLightConnectionStatus.setStyleSheet("color: red;")
-        self.statusWidget_ArduinoLightConnectionStatus.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
-        self.statusWidget_ArduinoLightConnectionStatusLayout.addWidget(self.statusWidget_ArduinoLightConnectionStatus, alignment=Qt.AlignCenter)
+        self.statusWidget_cameraActionStatus.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.statusWidget_cameraActionStatusLayout.addWidget(self.statusWidget_cameraActionStatus, alignment=Qt.AlignmentFlag.AlignCenter)
 
 
     def updateGantryConnectionStatus(self, status):
@@ -198,9 +184,7 @@ class StatusWidget(QGroupBox):
             self.statusWidget_GantryActionStatus.setStyleSheet("color: orange;")
         elif (action == "moving"):
             self.statusWidget_GantryActionStatus.setText("Moving...")
-            #to X={} and Y={}...".format(location[0], location[1]))
             self.statusWidget_GantryActionStatus.setStyleSheet("color: orange;")
-            pass
         elif (action == "referencing"):
             self.statusWidget_GantryActionStatus.setText("Referencing axes...")
             self.statusWidget_GantryActionStatus.setStyleSheet("color: orange;")
@@ -211,7 +195,7 @@ class StatusWidget(QGroupBox):
             self.statusWidget_GantryCoords.setText("NA")
             self.statusWidget_GantryCoords.setStyleSheet("color: red;")
         else:
-            self.statusWidget_GantryCoords.setText("X={};Y={}".format(coords[0],coords[1]))
+            self.statusWidget_GantryCoords.setText(f"X={coords[0]};Y={coords[1]}")
             self.statusWidget_GantryCoords.setStyleSheet("color: green;")
     
 
@@ -230,7 +214,7 @@ class StatusWidget(QGroupBox):
             self.statusWidget_cameraActionStatus.setStyleSheet("color: red;")
         else:
             self.cameraConnected = 1
-            self.statusWidget_CameraConnectionStatus.setText("{} - Connected".format(status))
+            self.statusWidget_CameraConnectionStatus.setText(f"{status} - Connected")
             self.statusWidget_CameraConnectionStatus.setStyleSheet("color: green;")
             self.statusWidget_cameraActionStatus.setText("Connected")
             self.statusWidget_cameraActionStatus.setStyleSheet("color: green;")
@@ -273,15 +257,3 @@ class StatusWidget(QGroupBox):
         elif (action == "Screenshot Saved"):
             self.statusWidget_cameraActionStatus.setText("Screenshot Saved")
             self.statusWidget_cameraActionStatus.setStyleSheet("color: green;")
-
-
-    def updateArduinoRingLightStatus(self, status):
-        if (status == 0):
-            self.statusWidget_ArduinoLightConnectionStatus.setText("Disconnected")
-            self.statusWidget_ArduinoLightConnectionStatus.setStyleSheet("color: red;")
-        elif (status == 1):
-            self.statusWidget_ArduinoLightConnectionStatus.setText("Connected")
-            self.statusWidget_ArduinoLightConnectionStatus.setStyleSheet("color: green;")
-        elif (status == 2):
-            self.statusWidget_ArduinoLightConnectionStatus.setText("Connection Failed")
-            self.statusWidget_ArduinoLightConnectionStatus.setStyleSheet("color: red;")

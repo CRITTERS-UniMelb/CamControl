@@ -1,15 +1,16 @@
 # Import packages
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-
 import queue
 import re
 import socket
 import time
 
+from PyQt6.QtCore import *
+from PyQt6.QtGui import *
+from PyQt6.QtWidgets import *
+
 # Import local scripts
 import gantry_commands
+
 
 # Thread Class
 class GantryCom(QThread):
@@ -18,7 +19,7 @@ class GantryCom(QThread):
     gantryCoords = pyqtSignal(object)
 
     def __init__(self, gantryAddress, gantryConnectionStatus):
-        super(GantryCom, self).__init__()
+        super().__init__()
         # Gantry address
         self.gantryAddress = gantryAddress
 
@@ -40,7 +41,7 @@ class GantryCom(QThread):
     def run(self):
         try:
             self.sock.connect(self.gantryAddress)
-        except socket.timeout:
+        except TimeoutError:
             print("ELLY:    Warning - Failed to connect to the gantry")
             self.endGantryConnection = True
         else:
@@ -53,13 +54,10 @@ class GantryCom(QThread):
                 self.sock.recv(8192)
                 gantrySummary = str(self.sock.recv(8192))
                 jointCoords = re.findall(r"(?<=POSJOINTSETPOINT )(-?\d+.\d+)\s+(-?\d+.\d+)", gantrySummary)
-                try:
-                    self.gantryCoords.emit(jointCoords[0])
-                except:
-                    print("error")
-                    pass
+                self.gantryCoords.emit(jointCoords[0])
+                
                 time.sleep(0.1)
-            except socket.error:
+            except OSError:
                 print("ELLY:    Warning - Lost connection to the gantry")
                 self.sock.close()
                 self.gantryConnectionSignal.emit(0)
@@ -73,7 +71,7 @@ class GantryCom(QThread):
                     self.sock.sendall(gantry_commands.keepAliveCMD)
                     self.sock.recv(8192)
                     time.sleep(0.1)
-                except socket.error:
+                except OSError:
                     print("ELLY:    Warning - Failed to connect to the gantry")
                     self.gantryConnectionSignal.emit(0)
                     self.endGantryConnection = True
