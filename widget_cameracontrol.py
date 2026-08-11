@@ -23,6 +23,7 @@ class CameraControlWidget(QGroupBox):
     cameraShowHideDisplay = pyqtSignal(int)
     cameraConnectionStatus = pyqtSignal(object)
     cameraCurrentAction = pyqtSignal(object)
+    cameraExposure = pyqtSignal(int)
 
     # Set initiation commands
     def __init__(self):
@@ -194,7 +195,6 @@ class CameraControlWidget(QGroupBox):
         self.cameraWidgetParametersLayout.addLayout(self.cameraWidget_ExposureTimeSelectorLayout, 7, 1, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
         # Add slider for exposure time
         self.cameraWidget_ExposureTime = QSlider(Qt.Orientation.Horizontal)
-        self.cameraWidget_ExposureTime.setEnabled(False)
         self.cameraWidget_ExposureTime.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         # Set possible range from 0 to 200
         self.cameraWidget_ExposureTime.setRange(0, 200)
@@ -210,7 +210,6 @@ class CameraControlWidget(QGroupBox):
 
         # Add alternate entry box for exposure time
         self.cameraWidget_ExposureTimeSpin = QDoubleSpinBox()
-        self.cameraWidget_ExposureTimeSpin.setEnabled(False)
         self.cameraWidget_ExposureTimeSpin.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         # Set possible range and default
         self.cameraWidget_ExposureTimeSpin.setRange(0, 200)
@@ -272,6 +271,7 @@ class CameraControlWidget(QGroupBox):
             self.cameraThread = CameraThread()
             self.cameraThread.cameraNameSignal.connect(self.updateCameraConnection)
             self.cameraThread.cameraImage.connect(self.updateCameraDisplayImage)
+            self.cameraExposure.connect(self.cameraThread.changeExposureTime)
             # Starting the camera thread to start the live streaming
             self.cameraThread.start()
         # If already connected, disconnect when function is run
@@ -362,17 +362,15 @@ class CameraControlWidget(QGroupBox):
 
     # Define method for changing exposure time
     def updateExposureTime(self):
-        if (self.cameraConnected == 1) and (self.cameraThread):
-            self.cameraThread.changeExposureTime(int(self.cameraWidget_ExposureTime.value()))
+        self.cameraExposure.emit(int(self.cameraWidget_ExposureTime.value()))
     
     # Define method for changing exposure time
     def updateExposureTimeLabel(self):
         self.cameraWidget_ExposureTimeSpin.setValue(int(self.cameraWidget_ExposureTime.value()))
-        self.updateExposureTime()
 
     # Update spin selector for exposure time
     def updateExposureTimeSpin(self):
-        self.cameraWidget_ExposureTime.setValue(self.cameraWidget_ExposureTimeSpin.value())
+        self.cameraWidget_ExposureTime.setValue(int(self.cameraWidget_ExposureTimeSpin.value()))
 
     #  Function to update video output directory
     def selectCameraOutputVideoDirectory(self):

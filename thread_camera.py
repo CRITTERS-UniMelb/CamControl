@@ -20,6 +20,7 @@ class CameraThread(QThread):
         self.buf = None
         self.running = False
 
+    # Runs on startup to connect camera
     def connectCamera(self):
         self.hcam = cv2.VideoCapture(0)
         self.running = True
@@ -30,6 +31,8 @@ class CameraThread(QThread):
         self.imageMinimizedWidth = 500
         self.imageMinimizedHeight = 500
 
+    # Starts running camera once start signal is received
+    @pyqtSlot()
     def run(self):
         self.connectCamera()
         while self.running:
@@ -38,9 +41,11 @@ class CameraThread(QThread):
                 self.frame = frame.copy()
                 frame = self.cvimage_to_label(frame)
                 self.cameraImage.emit(frame)
-        if self.hcam:
-            self.hcam.release()
+        self.hcam.release()
+        self.cameraNameSignal.emit(0)
+        print("ELLY:    Camera disconnected")
         
+
     def cvimage_to_label(self,image):
         image = imutils.resize(image,width = 640)
         image = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
@@ -50,12 +55,12 @@ class CameraThread(QThread):
                        QImage.Format.Format_RGB888)
         return image
 
+    # Receives signal 'CameraExposure' from widget_cameracontrol, does nothing but notes exposure time does not change.
+    @pyqtSlot(int)
+    def changeExposureTime(self, expTime):
+        print(f"Native camera does not require exposure time - changing to {expTime} has no effect.")
 
     def stop(self):
         self.running = False
-        self.cameraNameSignal.emit(0)
-        print("ELLY:    Camera disconnected")
-        self.quit()
-        self.wait()
         
             
